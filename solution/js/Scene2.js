@@ -124,6 +124,8 @@ class Scene2 extends Phaser.Scene {
         let brainText = this.add.text(healthUI.x + 70, brainUI.y - 20, '0', { fontFamily: '"Roboto Condensed"', fontSize: 40, fill: '#ffffff' });
         brainText.setScrollFactor(0);
 
+        let time =this.time;
+
         // this.girl1 = this.playerGroup.create(this.groundLayer1.width/2,this.groundLayer1.height/2, "girlFaceRight");
         this.girl1 = this.playerGroup.create(312, 1026, "girlFaceRight");
         this.girl1.health = 1;
@@ -131,6 +133,7 @@ class Scene2 extends Phaser.Scene {
         this.girl1.weapon = "gun";
         this.girl1.brains = 0;
         this.girl1.canHurtPlayer = true;
+        this.girl1.canFire = true;
         this.girl1.UpdateBrains = function () {
             this.brains++;
             brainText.setText('' + this.brains);
@@ -147,14 +150,33 @@ class Scene2 extends Phaser.Scene {
             this.ammo--;
             ammoText.setText('' + this.ammo);
         };
+        this.girl1.CanHurtPlayer = function () {
+            if (!this.canHurtPlayer) {
+                this.canHurtPlayer = true;
+            }
+        };
+        // this.girl1.SetFireTrue = function () {
+        //     if (!this.canFire) {
+        //         this.canFire = true;
+        //     }
+        // };
         this.physics.add.overlap(this.zombieGroup, this.playerGroup, function (zombie, player) {
             if (player.canHurtPlayer) {
                 player.canHurtPlayer = false;
                 player.GainHealth(-1);
+                time.addEvent({ delay: 2000, callback: player.CanHurtPlayer, callbackScope: player, loop: false });
+                // setTimeout(player.CanHurtPlayer,2000);
             }
         });
 
         this.physics.add.collider(this.girl1, this.colLayer);
+
+        this.physics.add.collider(this.pickupGroup, this.playerGroup, function (pickup, player) {
+            pickup.Pickup(player);
+            pickup.destroy();
+        });
+
+
 
 
         //--text---//
@@ -182,7 +204,7 @@ class Scene2 extends Phaser.Scene {
 
         this.setFireTrue = this.time.addEvent({ delay: 500, callback: this.SetFireTrue, callbackScope: this, loop: true });
 
-        this.HurtPlayerTrue = this.time.addEvent({ delay: 2000, callback: this.CanHurtPlayer, callbackScope: this, loop: true });
+        // this.HurtPlayerTrue = this.time.addEvent({ delay: 2000, callback: this.CanHurtPlayer, callbackScope: this, loop: true });
 
 
 
@@ -205,7 +227,7 @@ class Scene2 extends Phaser.Scene {
 
         this.CheckAnimations();
         this.CheckMovement(this.speed);
-        this.CheckFire();
+        this.CheckFire(this.girl1);
     }
 
     //----------------------FUNCTONS-----------------------//
@@ -427,7 +449,9 @@ class Scene2 extends Phaser.Scene {
 
     CheckFire() {
         if (this.keySpace.isDown) {
-            this.FireBullet(this.bulletGroup, this.zombieGroup, this.playerGroup, this.pickupGroup, this.particleGroup, this.girl1);
+            if (this.canFire) {
+                this.FireBullet(this.bulletGroup, this.zombieGroup, this.playerGroup, this.pickupGroup, this.particleGroup, this.girl1);
+            }
         }
     }
 
@@ -445,17 +469,20 @@ class Scene2 extends Phaser.Scene {
 
     }
 
-    CanHurtPlayer() {
-        if (!this.girl1.canHurtPlayer) {
-            this.girl1.canHurtPlayer = true;
-        }
-    }
+    // CanHurtPlayer(player) {
+    //     if (!player.canHurtPlayer) {
+    //         player.canHurtPlayer = true;
+    //     }
+    // }
 
     FireBullet(bulletGroup, zombieGroup, playerGroup, pickupGroup, particleGroup, player) {
 
-        if (this.canFire) {
+
             if (this.girl1.ammo > 0) {
+                // setTimeout(this.SetFireTrue,500);
                 this.canFire = false;
+                // this.time.addEvent({ delay: 500, callback: player.SetFireTrue(), callbackScope: player, loop: false });
+
                 let posX = this.girl1.x + (this.girl1.width / 2);
                 let yPos = this.girl1.y;
                 this.girl1.UpdateAmmo();
@@ -470,55 +497,56 @@ class Scene2 extends Phaser.Scene {
 
                         //get random in index
                         let index = Math.floor(Math.random() * Math.floor(3));
+
                         //reduce zombie health
                         zombie.health -= bullet.damage;
+
                         //spawn blood splatter
                         let bloodSplat = particleGroup.create(zombie.x, zombie.y, 'bloodSplat');
                         bloodSplat.play('bloodSplat_anim');
 
-
                         //if zombie health ran out
                         if (zombie.health < 0) {
+
                             //update brains
                             player.UpdateBrains();
+
+                            //drop random loot
                             switch (index) {
                                 case 0:
                                     let health = pickupGroup.create(zombie.x, zombie.y, 'health');
                                     health.Pickup = function (player) {
                                         player.GainHealth(1);
-                                        console.log("PLAYER HEALTH: " + player.health);
                                     };
                                     health.play('health_anim');
                                     break;
+
                                 case 1:
                                     let ammo = pickupGroup.create(zombie.x, zombie.y, 'ammo');
                                     ammo.Pickup = function (player) {
                                         player.GainAmmo(10);
-                                        console.log("PLAYER AMMO: " + player.ammo);
                                     };
                                     ammo.play('ammo_anim');
                                     break;
+
                                 case 2:
                                     let gun = pickupGroup.create(zombie.x, zombie.y, 'gun');
                                     gun.Pickup = function (player) {
-                                        console.log("PLAYER WEAPON: " + player.weapon);
+                                        player.GainAmmo(5);
                                     };
                                     gun.play('gun_anim');
                                     break;
                             }
+                            //destroy zombie
                             zombie.destroy();
                         }
+                        //destroy bullet
                         bullet.destroy();
                     });
-                this.physics.add.collider(pickupGroup, playerGroup, function (pickup, player) {
-
-                    pickup.Pickup(player);
-                    pickup.destroy();
-                })
             }
         }
 
-    }
+
 
     SetFireTrue() {
         if (!this.canFire) {
