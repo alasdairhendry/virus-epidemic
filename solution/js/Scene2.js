@@ -7,6 +7,7 @@ class Scene2 extends Phaser.Scene {
 
     create() {
 
+        //Class Variables
         this.speed = 160;
         this.bulletVelX = 0;
         this.bulletVelY = 0;
@@ -17,103 +18,34 @@ class Scene2 extends Phaser.Scene {
         this.canHurtPlayer = true;
         this.zombieNumber = 0;
         this.zombiesInWorld = [];
-
-
-
-
+        this.numberOfZombies = 20;
+        this.colLayer = null;
 
         //---------------------CREATE STUFF------------------------//
 
         //setup Map
         this.map = this.make.tilemap({ key: "map" });
-        this.MapSetup(this.map, 64, 64, 32, 32);
+        Helper.MapSetup(this.map, 64, 64, 32, 32);
 
-        this.bulletGroup = this.physics.add.group();
-        this.zombieGroup = this.physics.add.group();
-        this.pickupGroup = this.physics.add.group();
-        this.playerGroup = this.physics.add.group();
-        this.particleGroup = this.physics.add.group();
-        this.UIGroup = this.physics.add.group();
+        //Create Groups
+        this.bulletGroup = Helper.CreateNewGroup(this);
+        this.zombieGroup = Helper.CreateNewGroup(this);
+        this.pickupGroup = Helper.CreateNewGroup(this);
+        this.playerGroup = Helper.CreateNewGroup(this);
+        this.particleGroup = Helper.CreateNewGroup(this);
+        this.UIGroup = Helper.CreateNewGroup(this);
 
-        //----add all spawn location here
-        this.spawnLocation1 = [1677, 909];
-        this.spawnLocation2 = [1871, 1131];
-        this.spawnLocation3 = [1533, 1190];
-        this.spawnLocation4 = [1523, 1498];
-        this.spawnLocation5 = [1034, 1543];
-        this.spawnLocation6 = [538, 1533];
-        this.spawnLocation7 = [514, 1197];
-        this.spawnLocation8 = [483, 1002];
-        this.spawnLocation9 = [530, 581];
-        this.spawnLocation10 = [1039, 515];
-        //add them all to the array
-        this.SpawnLocations = [this.spawnLocation1, this.spawnLocation2, this.spawnLocation3, this.spawnLocation4, this.spawnLocation5,
-        this.spawnLocation6, this.spawnLocation7, this.spawnLocation8, this.spawnLocation9, this.spawnLocation10];
-        // this.SpawnLocations = [this.spawnLocation8];
+        //Create Spawn Locations
+       this.SpawnLocations = Helper.SetupSpawnLocations();
+
+        //Setup Tile Sets
+        Helper.SetupTileSets(this,this.map,this.girl1);
+
+        //Setup Animations
+        Helper.SetupAnimations(this.anims);
 
 
-
-        //--------------------TILESETS---------------------//
-        let tileSet1 = this.NewTileSet("Ground", "Ground");
-        let tileSet2 = this.NewTileSet("Buildings", "Buildings");
-        let tileSet3 = this.NewTileSet("windows", "Windows");
-        let tileSet4 = this.NewTileSet("StairsRails", "Fences");
-        let tileSet5 = this.NewTileSet("Nature", "Nature");
-        let tileSet6 = this.NewTileSet("CityProps", "Props");
-        let tileSet7 = this.NewTileSet("Cars", "Cars");
-        let tileSet8 = this.NewTileSet("blood", "blood");
-        let tileSet9 = this.NewTileSet("Overlay", "Overlay");
-        let tileSet10 = this.NewTileSet("Lights", "Lights");
-        let tileSet11 = this.NewTileSet("Cols", "Cols");
-
-        //--------------------LAYERS---------------------//
-        this.colLayer = this.NewGroundLayer("Cols", tileSet11, 0, 0);
-        this.colLayer.setCollisionBetween(0, 4096);
-        this.NewGroundLayer("Ground", tileSet1, 0, 0);
-        this.NewGroundLayer("Buildings", tileSet2, 0, 0);
-        this.NewGroundLayer("Windows", tileSet3, 0, 0);
-        this.NewGroundLayer("Fences", tileSet4, 0, 0);
-        this.NewGroundLayer("Nature", tileSet5, 0, 0);
-        this.NewGroundLayer("Props", tileSet6, 0, 0);
-        this.NewGroundLayer("Cars", tileSet7, 0, 0);
-        this.NewGroundLayer("blood", tileSet8, 0, 0);
-        this.NewGroundLayer("Overlay1", tileSet9, 0, 0);
-        this.NewGroundLayer("Overlay2", tileSet9, 0, 0);
-        this.NewGroundLayer("Lights", tileSet10, 0, 0);
-
-
-
-
-        //------------------ANIMATION--------------------//
-        //-----players-----//
-        this.CreateAnimation("girl1_walkLeft_anim", "girlWalkLeft1", 5, -1, false);
-        this.CreateAnimation("girl1_walkRight_anim", "girlWalkRight1", 5, -1, false);
-        this.CreateAnimation("girl1_walkUp_anim", "girlWalkUp1", 5, -1, false);
-        this.CreateAnimation("girl1_walkDown_anim", "girlWalkDown1", 5, -1, false);
-        this.CreateAnimation("girl1_Right_anim", "girlFaceRight1", 5, -1, false);
-        this.CreateAnimation("girl1_Left_anim", "girlFaceLeft1", 5, -1, false);
-        this.CreateAnimation("girl1_Up_anim", "girlFaceUp1", 5, -1, false);
-        this.CreateAnimation("girl1_Down_anim", "girlFaceDown1", 5, -1, false);
-
-        //-----enemies----//
-        this.CreateAnimation("zombie1_walkLeft_anim", "zombieWalkLeft1", 5, -1, false);
-        this.CreateAnimation("zombie1_walkRight_anim", "zombieWalkRight1", 5, -1, false);
-        this.CreateAnimation("zombie1_walkUp_anim", "zombieWalkUp1", 5, -1, false);
-        this.CreateAnimation("zombie1_walkDown_anim", "zombieWalkDown1", 5, -1, false);
-        this.CreateAnimation("zombie1_Right_anim", "zombieFaceRight1", 5, -1, false);
-        this.CreateAnimation("zombie1_Left_anim", "zombieFaceLeft1", 5, -1, false);
-        this.CreateAnimation("zombie1_Up_anim", "zombieFaceUp1", 5, -1, false);
-        this.CreateAnimation("zombie1_Down_anim", "zombieFaceDown1", 5, -1, false);
-
-        //----pickups----//
-        this.CreateAnimation("health_anim", "health", 5, -1, false);
-        this.CreateAnimation("ammo_anim", "ammo", 5, -1, false);
-        this.CreateAnimation("gun_anim", "gun", 5, -1, false);
-
-        //----particles----//
-        this.CreateAnimation("bloodSplat_anim", "bloodSplat", 5, 0, true);
-
-        //-----UI----//
+        //Setup UI
         let healthUI = this.UIGroup.create(50, 50, 'healthUI');
         healthUI.setScrollFactor(0);
         let ammoUI = this.UIGroup.create(healthUI.x, healthUI.y + 100, 'ammoUI');
@@ -129,92 +61,19 @@ class Scene2 extends Phaser.Scene {
 
         let time = this.time;
 
-        // this.girl1 = this.playerGroup.create(this.groundLayer1.width/2,this.groundLayer1.height/2, "girlFaceRight");
+        //---Setup Player
         this.girl1 = this.playerGroup.create(312, 1026, "girlFaceRight");
-        this.girl1.name = "Player 1";
-        this.girl1.health = 1;
-        this.girl1.ammo = 30;
-        this.girl1.weapon = "gun";
-        this.girl1.brains = 0;
-        this.girl1.canHurtPlayer = true;
-        this.girl1.canFire = true;
-        this.girl1.UpdateBrains = function () {
-            this.brains++;
-            brainText.setText('' + this.brains);
-        };
-        this.girl1.GainHealth = function (_health) {
-            this.health += _health;
-            healthText.setText('' + this.health);
-        };
-        this.girl1.GainAmmo = function (_ammo) {
-            this.ammo += _ammo;
-            ammoText.setText('' + this.ammo);
-        };
-        this.girl1.UpdateAmmo = function () {
-            this.ammo--;
-            ammoText.setText('' + this.ammo);
-        };
-        this.girl1.CanHurtPlayer = function () {
-            if (!this.canHurtPlayer) {
-                this.canHurtPlayer = true;
-            }
-        };
-        // this.girl1.SetFireTrue = function () {
-        //     if (!this.canFire) {
-        //         this.canFire = true;
-        //     }
-        // };
-        this.physics.add.overlap(this.zombieGroup, this.playerGroup, function (zombie, player) {
-            if (player.canHurtPlayer) {
-                player.canHurtPlayer = false;
-                player.GainHealth(-1);
-                time.addEvent({ delay: 2000, callback: player.CanHurtPlayer, callbackScope: player, loop: false });
-                // setTimeout(player.CanHurtPlayer,2000);
-            }
-        });
+        this.PlayerSetup(this.girl1,brainText,ammoText,healthText);
 
-        this.physics.add.collider(this.girl1, this.colLayer);
-
-
-        this.physics.add.collider(this.pickupGroup, this.playerGroup, function (pickup, player) {
-            pickup.Pickup(player);
-            pickup.destroy();
-        });
+        //----add Physics Colliders----//
+        this.SetupCollisions(time);
 
 
 
 
-        //--text---//
-
-        healthText.setText('' + this.girl1.health);
-
-        ammoText.setText('' + this.girl1.ammo);
-
-        brainText.setText('' + this.girl1.brains);
-
-
-        console.log("PLAYER HEALTH: " + this.girl1.health);
-
-
-        this.PlayerSetup(this.girl1);
-
-
-        this.numberOfZombies = 20;
-
-        //Starting Animation
-        this.girl1.play("girl1_Right_anim");
-
-
+        //looping time events
         this.time.addEvent({ delay: 1000, callback: this.SpawnZombie, callbackScope: this, loop: true });
-
         this.time.addEvent({ delay: 500, callback: this.SetFireTrue, callbackScope: this, loop: true });
-
-        // this.HurtPlayerTrue = this.time.addEvent({ delay: 2000, callback: this.CanHurtPlayer, callbackScope: this, loop: true });
-
-
-
-        //----------INTERACTION-------------//
-        this.girl1.setInteractive();
 
         //--------------------KEYBOARD INPUT-----------------//
         let keyCodes = Phaser.Input.Keyboard.KeyCodes;
@@ -229,100 +88,54 @@ class Scene2 extends Phaser.Scene {
 
     //-----------------UPDATE------------------------------//
     update() {
-        this.CheckMovement(this.speed);
+        this.CheckMovement(this.speed, this.girl1);
         this.CheckFire(this.girl1);
-        this.UpdateZombieMovement();
-        Pathfinding.GetTileGridPosition(this.girl1);
+        Helper.UpdateZombieMovement(50,this.zombiesInWorld,this.girl1);
     }
 
-    //----------------------FUNCTONS-----------------------//
+    //----------------------CLASS METHODS-----------------------//
 
-    CreateAnimation(keyName, frameName, frameRate, repeatRate, hide) {
-        this.anims.create({
-            key: keyName,
-            frames: this.anims.generateFrameNumbers(frameName),
-            frameRate: frameRate,
-            repeat: repeatRate,
-            hideOnComplete: hide
-        });
-    }
-
-    MapSetup(map, mapWidth, mapHeight, tileWidth, tileHeight) {
-        map.width = mapWidth;
-        map.height = mapHeight;
-        map.tileHeight = tileHeight;
-        map.tileWidth = tileWidth;
-    }
-
-    PlayerSetup(player) {
+    PlayerSetup(player,brainText,ammoText,healthText) {
         this.cameras.main.startFollow(player);
         player.setCollideWorldBounds(true);
-    }
 
-    NewTileSet(layerName, variableName) {
-        return this.map.addTilesetImage(layerName, variableName);
-    }
 
-    NewGroundLayer(layerName, setOfTiles, x, y) {
-        return this.map.createStaticLayer(layerName, setOfTiles, x, y);
-    }
-
-    // NewPhysicsObject(xPos,yPos,spriteName){
-    //      return this.physics.add.sprite(xPos,yPos, spriteName);
-    // }
-
-    PlayAnimation(gameObject, animName, objectName) {
-        gameObject.setTexture(objectName);
-        gameObject.play(animName);
-    }
-
-    SetPlayerAnimation(movement) {
-        // Set the player animation based on the movement direction. This is updated only if a new animation is needed, not every frame.
-        if (movement === "up") {
-            this.PlayAnimation(this.girl1, "girl1_walkUp_anim", "girlWalkUp1");
-        }
-        else if (movement === "down") {
-            this.PlayAnimation(this.girl1, "girl1_walkDown_anim", "girlWalkDown1");
-        }
-        else if (movement === "left") {
-            this.PlayAnimation(this.girl1, "girl1_walkLeft_anim", "girlWalkLeft1");
-        }
-        else if (movement === "right") {
-            this.PlayAnimation(this.girl1, "girl1_walkRight_anim", "girlWalkRight1");
-        }
-        else if (movement === "idle") {
-            if (this.girl1.animationDirection === "up") {
-                this.PlayAnimation(this.girl1, "girl1_Up_anim", "girlFaceUp1");
+        player.name = "Player 1";
+        player.health = 1;
+        player.ammo = 30;
+        player.weapon = "gun";
+        player.brains = 0;
+        player.canHurtPlayer = true;
+        player.canFire = true;
+        player.UpdateBrains = function () {
+            this.brains++;
+            brainText.setText('' + this.brains);
+        };
+        player.GainHealth = function (_health) {
+            this.health += _health;
+            healthText.setText('' + this.health);
+        };
+        player.GainAmmo = function (_ammo) {
+            this.ammo += _ammo;
+            ammoText.setText('' + this.ammo);
+        };
+        player.UpdateAmmo = function () {
+            this.ammo--;
+            ammoText.setText('' + this.ammo);
+        };
+        player.CanHurtPlayer = function () {
+            if (!this.canHurtPlayer) {
+                this.canHurtPlayer = true;
             }
-            else if (this.girl1.animationDirection === "down") {
-                this.PlayAnimation(this.girl1, "girl1_Down_anim", "girlFaceDown1");
-            }
-            else if (this.girl1.animationDirection === "left") {
-                this.PlayAnimation(this.girl1, "girl1_Left_anim", "girlFaceLeft1");
-            }
-            else if (this.girl1.animationDirection === "right") {
-                this.PlayAnimation(this.girl1, "girl1_Right_anim", "girlFaceRight1");
-            }
-
-        }
+        };
+        player.setInteractive();
+        player.play("girl1_Right_anim");
+        healthText.setText('' + player.health);
+        ammoText.setText('' +player.ammo);
+        brainText.setText('' + player.brains);
     }
 
-    SetZombieAnimation(zombie) {
-        if (zombie.animationDirection === "up") {
-            this.PlayAnimation(zombie, "zombie1_walkUp_anim", "zombieWalkUp1");
-        }
-        else if (zombie.animationDirection === "down") {
-            this.PlayAnimation(zombie, "zombie1_walkDown_anim", "zombieWalkDown1");
-        }
-        else if (zombie.animationDirection === "left") {
-            this.PlayAnimation(zombie, "zombie1_walkLeft_anim", "zombieWalkLeft1");
-        }
-        else if (zombie.animationDirection === "right") {
-            this.PlayAnimation(zombie, "zombie1_walkRight_anim", "zombieWalkRight1");
-        }
-    }
-
-    CheckMovement(speedX) {
+    CheckMovement(speedX,player) {
         // Local variable defining the player movement
         let _speedy;
         let _speedx;
@@ -359,8 +172,8 @@ class Scene2 extends Phaser.Scene {
         velocity.x = _speedx;
         velocity.y = _speedy;
         velocity.normalize();
-        this.girl1.setVelocityX(velocity.x * speedX);
-        this.girl1.setVelocityY(velocity.y * speedX);
+        player.setVelocityX(velocity.x * speedX);
+        player.setVelocityY(velocity.y * speedX);
 
         if (_speedx !== 0 || _speedy !== 0) {
             // If we are moving, update the bullet velocity
@@ -371,100 +184,47 @@ class Scene2 extends Phaser.Scene {
             // let angle = ((Math.atan2(Math.sign(_speedx), Math.sign(_speedy)) * 180) / 3.14159) + 90;
             this.bulletRotation = ((Math.atan2(Math.sign(_speedx), Math.sign(_speedy)) * 180) / 3.14159) + 90;
 
-            if (newAnimation !== this.girl1.animationDirection) {
-                // If the current animation is different from the new one then we should update it 
-                this.SetPlayerAnimation(newAnimation);
-                this.girl1.animationDirection = newAnimation;
+            if (newAnimation !== player.animationDirection) {
+                // If the current animation is different from the new one then we should update it
+                Helper.SetPlayerAnimation(newAnimation,player);
+                player.animationDirection = newAnimation;
             }
         }
         else {
-            this.SetPlayerAnimation("idle");
+           Helper.SetPlayerAnimation("idle",this.girl1);
             this.girl1.animationDirection = "idle";
         }
     }
 
     CheckFire() {
-        if (this.keySpace.isDown) {
-            if (this.canFire) {
-                this.FireBullet(this.bulletGroup, this.zombieGroup, this.playerGroup, this.pickupGroup, this.particleGroup, this.girl1, this.zombiesInWorld);
-            }
+        if (this.keySpace.isDown && this.canFire) {
+            this.FireBullet(this.bulletGroup, this.zombieGroup, this.playerGroup, this.pickupGroup, this.particleGroup, this.girl1, this.zombiesInWorld);
         }
     }
-
-    UpdateZombieMovement() {
-        let zombieSpeed = 50;
-
-        for (let i = 0; i < this.zombiesInWorld.length; i++) {
-            const zombie = this.zombiesInWorld[i];
-
-            if (zombie.scene == undefined) continue;
-
-            let animationDirection = "idle";
-            let direction = new Phaser.Math.Vector2();
-            direction.x = this.girl1.x - zombie.x;
-            direction.y = this.girl1.y - zombie.y;
-            direction.normalize();
-
-            let angle = (Math.atan2(direction.x, direction.y) * 180) / 3.14;
-            if (angle < 0) angle += 360;
-
-            if (angle > 45 && angle < 135) {
-                animationDirection = "right";
-            }
-            else if (angle >= 135 && angle < 225) {
-                animationDirection = "up";
-            }
-            else if (angle >= 225 && angle < 315) {
-                animationDirection = "left";
-            }
-            else {
-                animationDirection = "down";
-            }
-
-            if (animationDirection !== zombie.animationDirection) {
-                zombie.animationDirection = animationDirection;
-                this.SetZombieAnimation(zombie);
-            }
-
-            zombie.setVelocityX(direction.x * zombieSpeed);
-            zombie.setVelocityY(direction.y * zombieSpeed)
-        }
-
-    }
-
     SpawnZombie() {
         this.numberOfZombies--;
         if (this.numberOfZombies > 0) {
             this.spawnPlaceIndex = Math.floor(Math.random() * Math.floor(this.SpawnLocations.length));
             let zombie = this.zombieGroup.create(this.SpawnLocations[this.spawnPlaceIndex][0], this.SpawnLocations[this.spawnPlaceIndex][1], "zombieFaceLeft1");
             //******
-            zombie.name = "zombie" + this.zombieNumber;
-            this.zombieNumber++;
-            Pathfinding.GetTileGridPosition(zombie);
+            zombie.name = "ZOMBIE:" + this.zombieNumber;
             this.zombiesInWorld.push(zombie);
-            this.physics.add.collider(zombie, this.colLayer);
+            this.zombieNumber++;
             //******
             zombie.health = 100;
         }
         else {
             clearInterval(this.SpawnZombie);
         }
-
     }
 
-    // CanHurtPlayer(player) {
-    //     if (!player.canHurtPlayer) {
-    //         player.canHurtPlayer = true;
-    //     }
-    // }
-
-    FireBullet(bulletGroup, zombieGroup, playerGroup, pickupGroup, particleGroup, player, zombiesInWorldArray) {
+    FireBullet(bulletGroup, zombieGroup, playerGroup, pickupGroup, particleGroup, player) {
 
 
         if (this.girl1.ammo > 0) {
-            // setTimeout(this.SetFireTrue,500);
+
             this.canFire = false;
-            // this.time.addEvent({ delay: 500, callback: player.SetFireTrue(), callbackScope: player, loop: false });
+
 
             let posX = this.girl1.x + (this.girl1.width / 2);
             let yPos = this.girl1.y;
@@ -521,7 +281,7 @@ class Scene2 extends Phaser.Scene {
                                 break;
                         }
 
-                        //destroy zombie                
+                        //destroy zombie
                         zombie.destroy();
                     }
                     //destroy bullet
@@ -530,12 +290,28 @@ class Scene2 extends Phaser.Scene {
         }
     }
 
-
-
-    SetFireTrue() {
+    SetFireTrue(_fireTrue) {
         if (!this.canFire) {
             this.canFire = true;
         }
+    }
+
+    SetupCollisions(time){
+        //Zombie=>Player overlap each other
+        this.physics.add.overlap(this.zombieGroup, this.playerGroup, function (zombie, player) {
+            if (player.canHurtPlayer) {
+                player.canHurtPlayer = false;
+                player.GainHealth(-1);
+                time.addEvent({ delay: 2000, callback: player.CanHurtPlayer, callbackScope: player, loop: false });
+            }
+        });
+        //Player=>Collider Layer touch each other
+        this.physics.add.collider(this.girl1, this.colLayer);
+        //Player=>pickup touch each other
+        this.physics.add.collider(this.pickupGroup, this.playerGroup, function (pickup, player) {
+            pickup.Pickup(player);
+            pickup.destroy();
+        });
     }
 
 }
