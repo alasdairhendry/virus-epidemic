@@ -1,5 +1,6 @@
 
 class Scene2 extends Phaser.Scene {
+
     constructor() {
         super("playGame");
     }
@@ -124,10 +125,11 @@ class Scene2 extends Phaser.Scene {
         let brainText = this.add.text(healthUI.x + 70, brainUI.y - 20, '0', { fontFamily: '"Roboto Condensed"', fontSize: 40, fill: '#ffffff' });
         brainText.setScrollFactor(0);
 
-        let time =this.time;
+        let time = this.time;
 
         // this.girl1 = this.playerGroup.create(this.groundLayer1.width/2,this.groundLayer1.height/2, "girlFaceRight");
         this.girl1 = this.playerGroup.create(312, 1026, "girlFaceRight");
+        this.girl1.name = "Player 1";
         this.girl1.health = 1;
         this.girl1.ammo = 30;
         this.girl1.weapon = "gun";
@@ -224,10 +226,9 @@ class Scene2 extends Phaser.Scene {
 
     //-----------------UPDATE------------------------------//
     update() {
-
-        this.CheckAnimations();
         this.CheckMovement(this.speed);
         this.CheckFire(this.girl1);
+        Pathfinding.GetTileGridPosition(this.girl1);
     }
 
     //----------------------FUNCTONS-----------------------//
@@ -271,84 +272,6 @@ class Scene2 extends Phaser.Scene {
         gameObject.play(animName);
     }
 
-    CheckAnimations() {
-        return;
-        if (Phaser.Input.Keyboard.JustDown(this.keyD)) {
-            this.PlayAnimation(this.girl1, "girl1_walkRight_anim", "girlWalkRight1");
-            // this.bulletSpeed *= 2;
-        }
-        if (Phaser.Input.Keyboard.JustDown(this.keyA)) {
-            this.PlayAnimation(this.girl1, "girl1_walkLeft_anim", "girlWalkLeft1");
-            // this.bulletSpeed *= 2;
-        }
-        if (Phaser.Input.Keyboard.JustDown(this.keyW)) {
-            this.PlayAnimation(this.girl1, "girl1_walkUp_anim", "girlWalkUp1");
-            // this.angle = Phaser.Math.CounterClockwise(0);
-        }
-        if (Phaser.Input.Keyboard.JustDown(this.keyS)) {
-            this.PlayAnimation(this.girl1, "girl1_walkDown_anim", "girlWalkDown1");
-            // this.angle = Phaser.Math.CounterClockwise(180);
-        }
-
-
-
-        if (Phaser.Input.Keyboard.JustUp(this.keyD)) {
-            if (this.keyA.isDown) {
-                return;
-            }
-            if (this.keyW.isDown) {
-                return;
-            }
-            if (this.keyS.isDown) {
-                return;
-            }
-            this.girl1.setVelocityX(0);
-            this.PlayAnimation(this.girl1, "girl1_Right_anim", "girlFaceRight1");
-        }
-        if (Phaser.Input.Keyboard.JustUp(this.keyA)) {
-            if (this.keyD.isDown) {
-                return;
-            }
-            if (this.keyW.isDown) {
-                return;
-            }
-            if (this.keyS.isDown) {
-                return;
-            }
-            this.girl1.setVelocityX(0);
-            this.PlayAnimation(this.girl1, "girl1_Left_anim", "girlFaceLeft1");
-        }
-
-        if (Phaser.Input.Keyboard.JustUp(this.keyW)) {
-            if (this.keyA.isDown) {
-                return;
-            }
-            if (this.keyD.isDown) {
-                return;
-            }
-            if (this.keyS.isDown) {
-                return;
-            }
-            this.girl1.setVelocityY(0);
-            this.PlayAnimation(this.girl1, "girl1_Up_anim", "girlFaceUp1");
-        }
-        if (Phaser.Input.Keyboard.JustUp(this.keyS)) {
-            if (this.keyA.isDown) {
-                return;
-            }
-            if (this.keyD.isDown) {
-                return;
-            }
-            if (this.keyW.isDown) {
-                return;
-            }
-            this.girl1.setVelocityY(0);
-            this.PlayAnimation(this.girl1, "girl1_Down_anim", "girlFaceDown1");
-        }
-
-
-    }
-
     SetAnimation(movement) {
         // Set the player animation based on the movement direction. This is updated only if a new animation is needed, not every frame.
         if (movement === "up") {
@@ -381,8 +304,6 @@ class Scene2 extends Phaser.Scene {
     }
 
     CheckMovement(speedX) {
-
-
         // Local variable defining the player movement
         var _speedy = 0;
         var _speedx = 0;
@@ -392,12 +313,10 @@ class Scene2 extends Phaser.Scene {
         // Work out the vertical movement first
         if (this.keyW.isDown) {
             _speedy = -speedX;
-            // _speedx = 0;
             newAnimation = "up";
         }
         else if (this.keyS.isDown) {
             _speedy = speedX;
-            // _speedx = 0;
             newAnimation = "down";
         }
         else {
@@ -407,12 +326,10 @@ class Scene2 extends Phaser.Scene {
         // Work out the horizontal movement second - this will override the vertical movement
         if (this.keyA.isDown) {
             _speedx = -speedX;
-            // _speedy = 0;
             newAnimation = "left";
         }
         else if (this.keyD.isDown) {
             _speedx = speedX;
-            // _speedy = 0;
             newAnimation = "right";
         }
         else {
@@ -478,73 +395,73 @@ class Scene2 extends Phaser.Scene {
     FireBullet(bulletGroup, zombieGroup, playerGroup, pickupGroup, particleGroup, player) {
 
 
-            if (this.girl1.ammo > 0) {
-                // setTimeout(this.SetFireTrue,500);
-                this.canFire = false;
-                // this.time.addEvent({ delay: 500, callback: player.SetFireTrue(), callbackScope: player, loop: false });
+        if (this.girl1.ammo > 0) {
+            // setTimeout(this.SetFireTrue,500);
+            this.canFire = false;
+            // this.time.addEvent({ delay: 500, callback: player.SetFireTrue(), callbackScope: player, loop: false });
 
-                let posX = this.girl1.x + (this.girl1.width / 2);
-                let yPos = this.girl1.y;
-                this.girl1.UpdateAmmo();
+            let posX = this.girl1.x + (this.girl1.width / 2);
+            let yPos = this.girl1.y;
+            this.girl1.UpdateAmmo();
 
-                let bullet = bulletGroup.create(posX, yPos, 'bullet');
-                bullet.damage = 60;
-                bullet.setAngle(this.bulletRotation);
-                bullet.setVelocityX(this.bulletVelX);
-                bullet.setVelocityY(this.bulletVelY);
-                this.physics.add.overlap(bulletGroup, zombieGroup,
-                    function (bullet, zombie) {
+            let bullet = bulletGroup.create(posX, yPos, 'bullet');
+            bullet.damage = 60;
+            bullet.setAngle(this.bulletRotation);
+            bullet.setVelocityX(this.bulletVelX);
+            bullet.setVelocityY(this.bulletVelY);
+            this.physics.add.overlap(bulletGroup, zombieGroup,
+                function (bullet, zombie) {
 
-                        //get random in index
-                        let index = Math.floor(Math.random() * Math.floor(3));
+                    //get random in index
+                    let index = Math.floor(Math.random() * Math.floor(3));
 
-                        //reduce zombie health
-                        zombie.health -= bullet.damage;
+                    //reduce zombie health
+                    zombie.health -= bullet.damage;
 
-                        //spawn blood splatter
-                        let bloodSplat = particleGroup.create(zombie.x, zombie.y, 'bloodSplat');
-                        bloodSplat.play('bloodSplat_anim');
+                    //spawn blood splatter
+                    let bloodSplat = particleGroup.create(zombie.x, zombie.y, 'bloodSplat');
+                    bloodSplat.play('bloodSplat_anim');
 
-                        //if zombie health ran out
-                        if (zombie.health < 0) {
+                    //if zombie health ran out
+                    if (zombie.health < 0) {
 
-                            //update brains
-                            player.UpdateBrains();
+                        //update brains
+                        player.UpdateBrains();
 
-                            //drop random loot
-                            switch (index) {
-                                case 0:
-                                    let health = pickupGroup.create(zombie.x, zombie.y, 'health');
-                                    health.Pickup = function (player) {
-                                        player.GainHealth(1);
-                                    };
-                                    health.play('health_anim');
-                                    break;
+                        //drop random loot
+                        switch (index) {
+                            case 0:
+                                let health = pickupGroup.create(zombie.x, zombie.y, 'health');
+                                health.Pickup = function (player) {
+                                    player.GainHealth(1);
+                                };
+                                health.play('health_anim');
+                                break;
 
-                                case 1:
-                                    let ammo = pickupGroup.create(zombie.x, zombie.y, 'ammo');
-                                    ammo.Pickup = function (player) {
-                                        player.GainAmmo(10);
-                                    };
-                                    ammo.play('ammo_anim');
-                                    break;
+                            case 1:
+                                let ammo = pickupGroup.create(zombie.x, zombie.y, 'ammo');
+                                ammo.Pickup = function (player) {
+                                    player.GainAmmo(10);
+                                };
+                                ammo.play('ammo_anim');
+                                break;
 
-                                case 2:
-                                    let gun = pickupGroup.create(zombie.x, zombie.y, 'gun');
-                                    gun.Pickup = function (player) {
-                                        player.GainAmmo(5);
-                                    };
-                                    gun.play('gun_anim');
-                                    break;
-                            }
-                            //destroy zombie
-                            zombie.destroy();
+                            case 2:
+                                let gun = pickupGroup.create(zombie.x, zombie.y, 'gun');
+                                gun.Pickup = function (player) {
+                                    player.GainAmmo(5);
+                                };
+                                gun.play('gun_anim');
+                                break;
                         }
-                        //destroy bullet
-                        bullet.destroy();
-                    });
-            }
+                        //destroy zombie
+                        zombie.destroy();
+                    }
+                    //destroy bullet
+                    bullet.destroy();
+                });
         }
+    }
 
 
 
