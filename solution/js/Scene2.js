@@ -65,6 +65,7 @@ class Scene2 extends Phaser.Scene {
 
         //--------------------LAYERS---------------------//
         this.colLayer = this.NewGroundLayer("Cols", tileSet11, 0, 0);
+        this.colLayer.setCollisionBetween(0,4096);
         this.groundLayer1 = this.NewGroundLayer("Ground", tileSet1, 0, 0);
         this.NewGroundLayer("Buildings", tileSet2, 0, 0);
         this.NewGroundLayer("Windows", tileSet3, 0, 0);

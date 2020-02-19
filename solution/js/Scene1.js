@@ -25,6 +25,7 @@ class Scene1 extends Phaser.Scene{
 
 
     //------environment------//
+    this.LoadImage( "Cols", "assets/images/Col.png", 64, 64);
     this.LoadImage( "Ground", "assets/images/Ground.png", 64, 64);
     this.LoadImage('Buildings', 'assets/images/Buildings.png', {frameWidth: 64, frameHeight: 64});
     this.LoadImage( 'Windows', 'assets/images/windows.png', {frameWidth: 64, frameHeight: 64});
