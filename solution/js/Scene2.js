@@ -147,7 +147,7 @@ class Scene2 extends Phaser.Scene {
             this.ammo--;
             ammoText.setText('' + this.ammo);
         };
-        this.physics.add.collider(this.zombieGroup, this.playerGroup, function (zombie, player) {
+        this.physics.add.overlap(this.zombieGroup, this.playerGroup, function (zombie, player) {
             if (player.canHurtPlayer) {
                 player.canHurtPlayer = false;
                 player.GainHealth(-1);
@@ -465,7 +465,7 @@ class Scene2 extends Phaser.Scene {
                 bullet.setAngle(this.bulletRotation);
                 bullet.setVelocityX(this.bulletVelX);
                 bullet.setVelocityY(this.bulletVelY);
-                this.physics.add.collider(bulletGroup, zombieGroup,
+                this.physics.add.overlap(bulletGroup, zombieGroup,
                     function (bullet, zombie) {
 
                         //get random in index
