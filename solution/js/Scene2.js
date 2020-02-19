@@ -61,8 +61,10 @@ class Scene2 extends Phaser.Scene{
         let tileSet8 = this.NewTileSet("blood","blood");
         let tileSet9 = this.NewTileSet("Overlay","Overlay");
         let tileSet10 = this.NewTileSet("Lights","Lights");
+        let tileSet11 = this.NewTileSet("Cols","Cols");
 
         //--------------------LAYERS---------------------//
+        this.colLayer = this.NewGroundLayer("Cols", tileSet11,0,0);
         this.groundLayer1 = this.NewGroundLayer("Ground", tileSet1,0,0);
         this.NewGroundLayer("Buildings", tileSet2,0,0);
         this.NewGroundLayer("Windows", tileSet3,0,0);
@@ -70,11 +72,10 @@ class Scene2 extends Phaser.Scene{
         this.NewGroundLayer("Nature", tileSet5,0,0);
        this.NewGroundLayer("Props", tileSet6,0,0);
         this.NewGroundLayer("Cars", tileSet7,0,0);
-        this.NewGroundLayer("Blood", tileSet8,0,0);
+        this.NewGroundLayer("blood", tileSet8,0,0);
         this.NewGroundLayer("Overlay1", tileSet9,0,0);
         this.NewGroundLayer("Overlay2", tileSet9,0,0);
         this.NewGroundLayer("Lights", tileSet10,0,0);
-
 
 
 
@@ -122,7 +123,8 @@ class Scene2 extends Phaser.Scene{
         let brainText = this.add.text(healthUI.x+70,brainUI.y - 20,'0',{fontFamily: '"Roboto Condensed"', fontSize: 40,fill: '#ffffff'});
         brainText.setScrollFactor(0);
 
-        this.girl1 = this.playerGroup.create(this.groundLayer1.width/2,this.groundLayer1.height/2, "girlFaceRight");
+        // this.girl1 = this.playerGroup.create(this.groundLayer1.width/2,this.groundLayer1.height/2, "girlFaceRight");
+        this.girl1 = this.playerGroup.create(312,1026, "girlFaceRight");
         this.girl1.health = 1;
         this.girl1.ammo = 30;
         this.girl1.weapon = "gun";
@@ -152,6 +154,8 @@ class Scene2 extends Phaser.Scene{
             }
         });
 
+        this.physics.add.collider(this.girl1,this.colLayer);
+
 
         //--text---//
 
@@ -174,11 +178,11 @@ class Scene2 extends Phaser.Scene{
         this.girl1.play("girl1_Right_anim");
 
 
-        this.spawnEvent = this.time.addEvent({ delay: 5000, callback: this.SpawnZombie, callbackScope: this, loop: true });
+        this.spawnZombie = this.time.addEvent({ delay: 5000, callback: this.SpawnZombie, callbackScope: this, loop: true });
 
-        this.spawnEvent = this.time.addEvent({ delay: 500, callback: this.SetFireTrue, callbackScope: this, loop: true });
+        this.setFireTrue = this.time.addEvent({ delay: 500, callback: this.SetFireTrue, callbackScope: this, loop: true });
 
-        this.spawnEvent = this.time.addEvent({ delay: 2000, callback: this.CanHurtPlayer, callbackScope: this, loop: true });
+        this.HurtPlayerTrue = this.time.addEvent({ delay: 2000, callback: this.CanHurtPlayer, callbackScope: this, loop: true });
 
 
 
@@ -236,9 +240,9 @@ class Scene2 extends Phaser.Scene{
         return this.map.createStaticLayer(layerName, setOfTiles,x,y);
     }
 
-    NewPhysicsObject(xPos,yPos,spriteName){
-         return this.physics.add.sprite(xPos,yPos, spriteName);
-    }
+    // NewPhysicsObject(xPos,yPos,spriteName){
+    //      return this.physics.add.sprite(xPos,yPos, spriteName);
+    // }
 
     PlayAnimation(gameObject, animName, objectName){
         gameObject.setTexture(objectName);
