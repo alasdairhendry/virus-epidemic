@@ -16,7 +16,7 @@ class Scene2 extends Phaser.Scene {
         this.canFire = true;
         this.canHurtPlayer = true;
         this.zombieNumber = 0;
-
+        this.zombiesInWorld = [];
 
 
 
@@ -49,6 +49,7 @@ class Scene2 extends Phaser.Scene {
         //add them all to the array
         this.SpawnLocations = [this.spawnLocation1, this.spawnLocation2, this.spawnLocation3, this.spawnLocation4, this.spawnLocation5,
         this.spawnLocation6, this.spawnLocation7, this.spawnLocation8, this.spawnLocation9, this.spawnLocation10];
+        // this.SpawnLocations = [this.spawnLocation8];
 
 
 
@@ -203,7 +204,7 @@ class Scene2 extends Phaser.Scene {
         this.girl1.play("girl1_Right_anim");
 
 
-        this.spawnZombie = this.time.addEvent({ delay: 5000, callback: this.SpawnZombie, callbackScope: this, loop: true });
+        this.spawnZombie = this.time.addEvent({ delay: 1000, callback: this.SpawnZombie, callbackScope: this, loop: true });
 
         this.setFireTrue = this.time.addEvent({ delay: 500, callback: this.SetFireTrue, callbackScope: this, loop: true });
 
@@ -229,6 +230,7 @@ class Scene2 extends Phaser.Scene {
     update() {
         this.CheckMovement(this.speed);
         this.CheckFire(this.girl1);
+        this.UpdateZombieMovement();
         Pathfinding.GetTileGridPosition(this.girl1);
     }
 
@@ -273,7 +275,7 @@ class Scene2 extends Phaser.Scene {
         gameObject.play(animName);
     }
 
-    SetAnimation(movement) {
+    SetPlayerAnimation(movement) {
         // Set the player animation based on the movement direction. This is updated only if a new animation is needed, not every frame.
         if (movement === "up") {
             this.PlayAnimation(this.girl1, "girl1_walkUp_anim", "girlWalkUp1");
@@ -301,6 +303,21 @@ class Scene2 extends Phaser.Scene {
                 this.PlayAnimation(this.girl1, "girl1_Right_anim", "girlFaceRight1");
             }
 
+        }
+    }
+
+    SetZombieAnimation(zombie) {
+        if (zombie.animationDirection === "up") {
+            this.PlayAnimation(zombie, "zombie1_walkUp_anim", "zombieWalkUp1");
+        }
+        else if (zombie.animationDirection === "down") {
+            this.PlayAnimation(zombie, "zombie1_walkDown_anim", "zombieWalkDown1");
+        }
+        else if (zombie.animationDirection === "left") {
+            this.PlayAnimation(zombie, "zombie1_walkLeft_anim", "zombieWalkLeft1");
+        }
+        else if (zombie.animationDirection === "right") {
+            this.PlayAnimation(zombie, "zombie1_walkRight_anim", "zombieWalkRight1");
         }
     }
 
@@ -355,12 +372,12 @@ class Scene2 extends Phaser.Scene {
 
             if (newAnimation != this.girl1.animationDirection) {
                 // If the current animation is different from the new one then we should update it 
-                this.SetAnimation(newAnimation);
+                this.SetPlayerAnimation(newAnimation);
                 this.girl1.animationDirection = newAnimation;
             }
         }
         else {
-            this.SetAnimation("idle");
+            this.SetPlayerAnimation("idle");
             this.girl1.animationDirection = "idle";
         }
     }
@@ -373,16 +390,56 @@ class Scene2 extends Phaser.Scene {
         }
     }
 
-    SpawnZombie() {
+    UpdateZombieMovement() {
+        var zombieSpeed = 0.5;
 
+        for (let i = 0; i < this.zombiesInWorld.length; i++) {
+            const zombie = this.zombiesInWorld[i];
+
+            var animationDirection = "idle";
+            var direction = new Phaser.Math.Vector2();
+            direction.x = this.girl1.x - zombie.x;
+            direction.y = this.girl1.y - zombie.y;
+            direction.normalize();
+
+            zombie.x += direction.x * zombieSpeed;
+            zombie.y += direction.y * zombieSpeed;
+
+            var angle = (Math.atan2(direction.x, direction.y) * 180) / 3.14;
+            if (angle < 0) angle += 360;
+
+            if (angle > 45 && angle < 135) {
+                animationDirection = "right";
+            }
+            else if (angle >= 135 && angle < 225) {
+                animationDirection = "up";
+            }
+            else if (angle >= 225 && angle < 315) {
+                animationDirection = "left";
+            }
+            else {
+                animationDirection = "down";
+            }
+
+            if (animationDirection != zombie.animationDirection) {
+                zombie.animationDirection = animationDirection;
+                this.SetZombieAnimation(zombie);
+            }
+            // zombie.setVelocityX(direction.x) * zombieSpeed;
+            // zombie.setVelocityY(direction.y) * zombieSpeed;
+        }
+    }
+
+    SpawnZombie() {
         this.numberOfZombies--;
         if (this.numberOfZombies > 0) {
             this.spawnPlaceIndex = Math.floor(Math.random() * Math.floor(this.SpawnLocations.length));
             let zombie = this.zombieGroup.create(this.SpawnLocations[this.spawnPlaceIndex][0], this.SpawnLocations[this.spawnPlaceIndex][1], "zombieFaceLeft1");
             //******
-            zombie.name = "zombie"+ this.zombieNumber;
+            zombie.name = "zombie" + this.zombieNumber;
             this.zombieNumber++;
             Pathfinding.GetTileGridPosition(zombie);
+            this.zombiesInWorld.push(zombie);
             //******
             zombie.health = 100;
         }
