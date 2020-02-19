@@ -69,7 +69,7 @@ class Scene2 extends Phaser.Scene {
         //--------------------LAYERS---------------------//
         this.colLayer = this.NewGroundLayer("Cols", tileSet11, 0, 0);
         this.colLayer.setCollisionBetween(0, 4096);
-        this.groundLayer1 = this.NewGroundLayer("Ground", tileSet1, 0, 0);
+        this.NewGroundLayer("Ground", tileSet1, 0, 0);
         this.NewGroundLayer("Buildings", tileSet2, 0, 0);
         this.NewGroundLayer("Windows", tileSet3, 0, 0);
         this.NewGroundLayer("Fences", tileSet4, 0, 0);
@@ -175,6 +175,7 @@ class Scene2 extends Phaser.Scene {
 
         this.physics.add.collider(this.girl1, this.colLayer);
 
+
         this.physics.add.collider(this.pickupGroup, this.playerGroup, function (pickup, player) {
             pickup.Pickup(player);
             pickup.destroy();
@@ -204,9 +205,9 @@ class Scene2 extends Phaser.Scene {
         this.girl1.play("girl1_Right_anim");
 
 
-        this.spawnZombie = this.time.addEvent({ delay: 1000, callback: this.SpawnZombie, callbackScope: this, loop: true });
+        this.time.addEvent({ delay: 1000, callback: this.SpawnZombie, callbackScope: this, loop: true });
 
-        this.setFireTrue = this.time.addEvent({ delay: 500, callback: this.SetFireTrue, callbackScope: this, loop: true });
+        this.time.addEvent({ delay: 500, callback: this.SetFireTrue, callbackScope: this, loop: true });
 
         // this.HurtPlayerTrue = this.time.addEvent({ delay: 2000, callback: this.CanHurtPlayer, callbackScope: this, loop: true });
 
@@ -323,10 +324,10 @@ class Scene2 extends Phaser.Scene {
 
     CheckMovement(speedX) {
         // Local variable defining the player movement
-        var _speedy = 0;
-        var _speedx = 0;
+        let _speedy;
+        let _speedx;
 
-        var newAnimation = "idle";
+        let newAnimation = "idle";
 
         // Work out the vertical movement first
         if (this.keyW.isDown) {
@@ -354,23 +355,23 @@ class Scene2 extends Phaser.Scene {
             _speedx = 0;
         }
 
-        var velocity = new Phaser.Math.Vector2();
+        let velocity = new Phaser.Math.Vector2();
         velocity.x = _speedx;
         velocity.y = _speedy;
         velocity.normalize();
         this.girl1.setVelocityX(velocity.x * speedX);
         this.girl1.setVelocityY(velocity.y * speedX);
 
-        if (_speedx != 0 || _speedy != 0) {
+        if (_speedx !== 0 || _speedy !== 0) {
             // If we are moving, update the bullet velocity
             this.bulletVelX = _speedx * 2;
             this.bulletVelY = _speedy * 2;
 
             // If we are moving, update the bullet angle
-            var angle = ((Math.atan2(Math.sign(_speedx), Math.sign(_speedy)) * 180) / 3.14159) + 90;
-            this.bulletRotation = angle;
+            // let angle = ((Math.atan2(Math.sign(_speedx), Math.sign(_speedy)) * 180) / 3.14159) + 90;
+            this.bulletRotation = ((Math.atan2(Math.sign(_speedx), Math.sign(_speedy)) * 180) / 3.14159) + 90;
 
-            if (newAnimation != this.girl1.animationDirection) {
+            if (newAnimation !== this.girl1.animationDirection) {
                 // If the current animation is different from the new one then we should update it 
                 this.SetPlayerAnimation(newAnimation);
                 this.girl1.animationDirection = newAnimation;
@@ -391,21 +392,21 @@ class Scene2 extends Phaser.Scene {
     }
 
     UpdateZombieMovement() {
-        var zombieSpeed = 0.5;
+        let zombieSpeed = 50;
 
         for (let i = 0; i < this.zombiesInWorld.length; i++) {
             const zombie = this.zombiesInWorld[i];
 
-            var animationDirection = "idle";
-            var direction = new Phaser.Math.Vector2();
+            let animationDirection = "idle";
+            let direction = new Phaser.Math.Vector2();
             direction.x = this.girl1.x - zombie.x;
             direction.y = this.girl1.y - zombie.y;
             direction.normalize();
 
-            zombie.x += direction.x * zombieSpeed;
-            zombie.y += direction.y * zombieSpeed;
+            // zombie.x += direction.x * zombieSpeed;
+            // zombie.y += direction.y * zombieSpeed;
 
-            var angle = (Math.atan2(direction.x, direction.y) * 180) / 3.14;
+            let angle = (Math.atan2(direction.x, direction.y) * 180) / 3.14;
             if (angle < 0) angle += 360;
 
             if (angle > 45 && angle < 135) {
@@ -421,13 +422,14 @@ class Scene2 extends Phaser.Scene {
                 animationDirection = "down";
             }
 
-            if (animationDirection != zombie.animationDirection) {
+            if (animationDirection !== zombie.animationDirection) {
                 zombie.animationDirection = animationDirection;
                 this.SetZombieAnimation(zombie);
             }
-            // zombie.setVelocityX(direction.x) * zombieSpeed;
-            // zombie.setVelocityY(direction.y) * zombieSpeed;
+            zombie.setVelocityX(direction.x * zombieSpeed);
+            zombie.setVelocityY(direction.y * zombieSpeed)
         }
+
     }
 
     SpawnZombie() {
@@ -440,6 +442,7 @@ class Scene2 extends Phaser.Scene {
             this.zombieNumber++;
             Pathfinding.GetTileGridPosition(zombie);
             this.zombiesInWorld.push(zombie);
+            this.physics.add.collider(zombie, this.colLayer);
             //******
             zombie.health = 100;
         }
