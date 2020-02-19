@@ -246,8 +246,8 @@ class Scene2 extends Phaser.Scene {
         gameObject.play(animName);
     }
 
-    ChangeAnimation(gameObject, animName, objectName,newAnim){
-        gameObject.anims.stop(animName);
+    ChangeAnimation(gameObject,  objectName,newAnim){
+        gameObject.anims.stop();
         gameObject.setTexture(objectName);
         gameObject.play(newAnim);
 
@@ -259,7 +259,7 @@ class Scene2 extends Phaser.Scene {
             this.keyA.isDown = false;
             this.keyS.isDown = false;
             this.keyW.isDown = false;
-            this.ChangeAnimation(this.girl1, this.animationPlaying, "girlWalkRight1","girl1_walkRight_anim");
+            this.ChangeAnimation(this.girl1,  "girlWalkRight1","girl1_walkRight_anim");
             // this.PlayAnimation(this.girl1, "girl1_walkRight_anim", "girlWalkRight1");
 
         }
@@ -267,7 +267,7 @@ class Scene2 extends Phaser.Scene {
             this.keyD.isDown = false;
             this.keyS.isDown = false;
             this.keyW.isDown = false;
-            this.ChangeAnimation(this.girl1, this.animationPlaying, "girlWalkLeft1","girl1_walkLeft_anim");
+            this.ChangeAnimation(this.girl1,  "girlWalkLeft1","girl1_walkLeft_anim");
             // this.PlayAnimation(this.girl1, "girl1_walkLeft_anim", "girlWalkLeft1");
             // this.bulletSpeed *= 2;
         }
@@ -275,7 +275,7 @@ class Scene2 extends Phaser.Scene {
             this.keyA.isDown = false;
             this.keyS.isDown = false;
             this.keyD.isDown = false;
-            this.ChangeAnimation(this.girl1, this.animationPlaying, "girlWalkUp1","girl1_walkUp_anim");
+            this.ChangeAnimation(this.girl1, "girlWalkUp1","girl1_walkUp_anim");
             // this.PlayAnimation(this.girl1, "girl1_walkUp_anim", "girlWalkUp1");
             // this.angle = Phaser.Math.CounterClockwise(0);
         }
@@ -283,7 +283,7 @@ class Scene2 extends Phaser.Scene {
             this.keyA.isDown = false;
             this.keyD.isDown = false;
             this.keyW.isDown = false;
-            this.ChangeAnimation(this.girl1, this.animationPlaying, "girlWalkDown1","girl1_walkDown_anim");
+            this.ChangeAnimation(this.girl1, "girlWalkDown1","girl1_walkDown_anim");
             // this.PlayAnimation(this.girl1, "girl1_walkDown_anim", "girlWalkDown1");
             // this.angle = Phaser.Math.CounterClockwise(180);
         }
