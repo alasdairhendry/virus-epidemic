@@ -386,7 +386,7 @@ class Scene2 extends Phaser.Scene {
     CheckFire() {
         if (this.keySpace.isDown) {
             if (this.canFire) {
-                this.FireBullet(this.bulletGroup, this.zombieGroup, this.playerGroup, this.pickupGroup, this.particleGroup, this.girl1);
+                this.FireBullet(this.bulletGroup, this.zombieGroup, this.playerGroup, this.pickupGroup, this.particleGroup, this.girl1, this.zombiesInWorld);
             }
         }
     }
@@ -397,14 +397,13 @@ class Scene2 extends Phaser.Scene {
         for (let i = 0; i < this.zombiesInWorld.length; i++) {
             const zombie = this.zombiesInWorld[i];
 
+            if (zombie.scene == undefined) continue;
+
             let animationDirection = "idle";
             let direction = new Phaser.Math.Vector2();
             direction.x = this.girl1.x - zombie.x;
             direction.y = this.girl1.y - zombie.y;
             direction.normalize();
-
-            // zombie.x += direction.x * zombieSpeed;
-            // zombie.y += direction.y * zombieSpeed;
 
             let angle = (Math.atan2(direction.x, direction.y) * 180) / 3.14;
             if (angle < 0) angle += 360;
@@ -426,6 +425,7 @@ class Scene2 extends Phaser.Scene {
                 zombie.animationDirection = animationDirection;
                 this.SetZombieAnimation(zombie);
             }
+
             zombie.setVelocityX(direction.x * zombieSpeed);
             zombie.setVelocityY(direction.y * zombieSpeed)
         }
@@ -458,7 +458,7 @@ class Scene2 extends Phaser.Scene {
     //     }
     // }
 
-    FireBullet(bulletGroup, zombieGroup, playerGroup, pickupGroup, particleGroup, player) {
+    FireBullet(bulletGroup, zombieGroup, playerGroup, pickupGroup, particleGroup, player, zombiesInWorldArray) {
 
 
         if (this.girl1.ammo > 0) {
@@ -520,7 +520,8 @@ class Scene2 extends Phaser.Scene {
                                 gun.play('gun_anim');
                                 break;
                         }
-                        //destroy zombie
+
+                        //destroy zombie                
                         zombie.destroy();
                     }
                     //destroy bullet
