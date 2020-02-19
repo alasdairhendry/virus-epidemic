@@ -14,7 +14,6 @@ class Scene2 extends Phaser.Scene {
         this.bulletRotation = 0;
         this.canFire = true;
         this.canHurtPlayer = true;
-        this.animationPlaying = "";
 
 
 
@@ -66,7 +65,7 @@ class Scene2 extends Phaser.Scene {
 
         //--------------------LAYERS---------------------//
         this.colLayer = this.NewGroundLayer("Cols", tileSet11, 0, 0);
-        this.colLayer.setCollisionBetween(0,4096);
+        this.colLayer.setCollisionBetween(0, 4096);
         this.groundLayer1 = this.NewGroundLayer("Ground", tileSet1, 0, 0);
         this.NewGroundLayer("Buildings", tileSet2, 0, 0);
         this.NewGroundLayer("Windows", tileSet3, 0, 0);
@@ -241,50 +240,31 @@ class Scene2 extends Phaser.Scene {
         return this.map.createStaticLayer(layerName, setOfTiles, x, y);
     }
 
+    // NewPhysicsObject(xPos,yPos,spriteName){
+    //      return this.physics.add.sprite(xPos,yPos, spriteName);
+    // }
+
     PlayAnimation(gameObject, animName, objectName) {
         gameObject.setTexture(objectName);
         gameObject.play(animName);
     }
 
-    ChangeAnimation(gameObject,  objectName,newAnim){
-        gameObject.anims.stop();
-        gameObject.setTexture(objectName);
-        gameObject.play(newAnim);
-
-    }
-
     CheckAnimations() {
-
+        return;
         if (Phaser.Input.Keyboard.JustDown(this.keyD)) {
-            this.keyA.isDown = false;
-            this.keyS.isDown = false;
-            this.keyW.isDown = false;
-            this.ChangeAnimation(this.girl1,  "girlWalkRight1","girl1_walkRight_anim");
-            // this.PlayAnimation(this.girl1, "girl1_walkRight_anim", "girlWalkRight1");
-
+            this.PlayAnimation(this.girl1, "girl1_walkRight_anim", "girlWalkRight1");
+            // this.bulletSpeed *= 2;
         }
         if (Phaser.Input.Keyboard.JustDown(this.keyA)) {
-            this.keyD.isDown = false;
-            this.keyS.isDown = false;
-            this.keyW.isDown = false;
-            this.ChangeAnimation(this.girl1,  "girlWalkLeft1","girl1_walkLeft_anim");
-            // this.PlayAnimation(this.girl1, "girl1_walkLeft_anim", "girlWalkLeft1");
+            this.PlayAnimation(this.girl1, "girl1_walkLeft_anim", "girlWalkLeft1");
             // this.bulletSpeed *= 2;
         }
         if (Phaser.Input.Keyboard.JustDown(this.keyW)) {
-            this.keyA.isDown = false;
-            this.keyS.isDown = false;
-            this.keyD.isDown = false;
-            this.ChangeAnimation(this.girl1, "girlWalkUp1","girl1_walkUp_anim");
-            // this.PlayAnimation(this.girl1, "girl1_walkUp_anim", "girlWalkUp1");
+            this.PlayAnimation(this.girl1, "girl1_walkUp_anim", "girlWalkUp1");
             // this.angle = Phaser.Math.CounterClockwise(0);
         }
         if (Phaser.Input.Keyboard.JustDown(this.keyS)) {
-            this.keyA.isDown = false;
-            this.keyD.isDown = false;
-            this.keyW.isDown = false;
-            this.ChangeAnimation(this.girl1, "girlWalkDown1","girl1_walkDown_anim");
-            // this.PlayAnimation(this.girl1, "girl1_walkDown_anim", "girlWalkDown1");
+            this.PlayAnimation(this.girl1, "girl1_walkDown_anim", "girlWalkDown1");
             // this.angle = Phaser.Math.CounterClockwise(180);
         }
 
@@ -347,57 +327,101 @@ class Scene2 extends Phaser.Scene {
 
     }
 
-    // SetAnimation(movement) {
-    //     // Set the player animation based on the movement direction. This is updated only if a new animation is needed, not every frame.
-    //     if (movement === "up") {
-    //         this.PlayAnimation(this.girl1, "girl1_Up_anim", "girlFaceUp1");
-    //     }
-    //     else if (movement === "down") {
-    //         this.PlayAnimation(this.girl1, "girl1_Down_anim", "girlFaceDown1");
-    //     }
-    //     else if (movement === "left") {
-    //         this.PlayAnimation(this.girl1, "girl1_Left_anim", "girlFaceLeft1");
-    //     }
-    //     else if (movement === "right") {
-    //         this.PlayAnimation(this.girl1, "girl1_Right_anim", "girlFaceRight1");
-    //     }
-    //     else if (movement === "none") {
-    //
-    //     }
-    // }
+    SetAnimation(movement) {
+        // Set the player animation based on the movement direction. This is updated only if a new animation is needed, not every frame.
+        if (movement === "up") {
+            this.PlayAnimation(this.girl1, "girl1_walkUp_anim", "girlWalkUp1");
+        }
+        else if (movement === "down") {
+            this.PlayAnimation(this.girl1, "girl1_walkDown_anim", "girlWalkDown1");
+        }
+        else if (movement === "left") {
+            this.PlayAnimation(this.girl1, "girl1_walkLeft_anim", "girlWalkLeft1");
+        }
+        else if (movement === "right") {
+            this.PlayAnimation(this.girl1, "girl1_walkRight_anim", "girlWalkRight1");
+        }
+        else if (movement === "idle") {
+            if (this.girl1.animationDirection === "up") {
+                this.PlayAnimation(this.girl1, "girl1_Up_anim", "girlFaceUp1");
+            }
+            else if (this.girl1.animationDirection === "down") {
+                this.PlayAnimation(this.girl1, "girl1_Down_anim", "girlFaceDown1");
+            }
+            else if (this.girl1.animationDirection === "left") {
+                this.PlayAnimation(this.girl1, "girl1_Left_anim", "girlFaceLeft1");
+            }
+            else if (this.girl1.animationDirection === "right") {
+                this.PlayAnimation(this.girl1, "girl1_Right_anim", "girlFaceRight1");
+            }
+
+        }
+    }
 
     CheckMovement(speedX) {
 
-        if (this.keyD.isDown) {
-            this.girl1.setVelocityY(0);
-            this.girl1.setVelocityX(speedX);
-            this.bulletVelX = speedX *2;
-            this.bulletVelY = 0;
-            this.scaleX = 1;
-            this.bulletRotation = 0;
+
+        // Local variable defining the player movement
+        var _speedy = 0;
+        var _speedx = 0;
+
+        var newAnimation = "idle";
+
+        // Work out the vertical movement first
+        if (this.keyW.isDown) {
+            _speedy = -speedX;
+            // _speedx = 0;
+            newAnimation = "up";
         }
-        if (this.keyA.isDown)
-        {
-            this.girl1.setVelocityY(0);
-            this.girl1.setVelocityX(-speedX);
-            this.bulletVelX = -speedX *2;
-            this.bulletVelY = 0;
-            this.scaleX = -1;
-            this.bulletRotation = 180;
+        else if (this.keyS.isDown) {
+            _speedy = speedX;
+            // _speedx = 0;
+            newAnimation = "down";
         }
-        if (this.keyW.isDown){
-            this.girl1.setVelocityX(0);
-            this.girl1.setVelocityY(-speedX);
-            this.bulletVelX = 0;
-            this.bulletVelY = -speedX *2;
-            this.bulletRotation = 270;
+        else {
+            _speedy = 0;
         }
-        if (this.keyS.isDown){
-            this.girl1.setVelocityX(0);
-            this.girl1.setVelocityY(speedX);
-            this.bulletVelX = 0;
-            this.bulletVelY =speedX *2;
-            this.bulletRotation = 90;
+
+        // Work out the horizontal movement second - this will override the vertical movement
+        if (this.keyA.isDown) {
+            _speedx = -speedX;
+            // _speedy = 0;
+            newAnimation = "left";
+        }
+        else if (this.keyD.isDown) {
+            _speedx = speedX;
+            // _speedy = 0;
+            newAnimation = "right";
+        }
+        else {
+            _speedx = 0;
+        }
+
+        var velocity = new Phaser.Math.Vector2();
+        velocity.x = _speedx;
+        velocity.y = _speedy;
+        velocity.normalize();
+        this.girl1.setVelocityX(velocity.x * speedX);
+        this.girl1.setVelocityY(velocity.y * speedX);
+
+        if (_speedx != 0 || _speedy != 0) {
+            // If we are moving, update the bullet velocity
+            this.bulletVelX = _speedx * 2;
+            this.bulletVelY = _speedy * 2;
+
+            // If we are moving, update the bullet angle
+            var angle = ((Math.atan2(Math.sign(_speedx), Math.sign(_speedy)) * 180) / 3.14159) + 90;
+            this.bulletRotation = angle;
+
+            if (newAnimation != this.girl1.animationDirection) {
+                // If the current animation is different from the new one then we should update it 
+                this.SetAnimation(newAnimation);
+                this.girl1.animationDirection = newAnimation;
+            }
+        }
+        else {
+            this.SetAnimation("idle");
+            this.girl1.animationDirection = "idle";
         }
     }
 
