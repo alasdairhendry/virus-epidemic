@@ -43,7 +43,7 @@ class Scene1 extends Phaser.Scene {
         this.LoadImage('ammoUI', 'assets/images/ammoUI.png', { frameWidth: 32, frameHeight: 32 });
         this.LoadImage('brainUI', 'assets/images/brainUI.png', { frameWidth: 32, frameHeight: 32 });
 
-        this.load.tilemapTiledJSON("map", "assets/map.json");
+        this.load.tilemapTiledJSON("map", "assets/mapNew.json");
 
         //-----players-----//
         this.LoadSpriteSheet("girlWalkLeft1", "assets/images/spriteSheets/girl1_walkLeft.png", 32, 64);

@@ -3,10 +3,10 @@
 
 let config = {
     type: Phaser.AUTO,
-    width: 800,
-    height: 800,
+    width: 2048,
+    height: 2048,
     scale: {
-        mode: Phaser.Scale.RESIZE,
+        // mode: Phaser.Scale.RESIZE,
         autoCenter: Phaser.Scale.CENTER_BOTH
     },
     scene: [Scene1,Scene2],

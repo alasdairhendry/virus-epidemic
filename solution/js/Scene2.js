@@ -34,6 +34,8 @@ class Scene2 extends Phaser.Scene {
         this.playerGroup = Helper.CreateNewGroup(this);
         this.particleGroup = Helper.CreateNewGroup(this);
         this.UIGroup = Helper.CreateNewGroup(this);
+        this.CollidersGroup = Helper.CreateNewGroup(this);
+
 
         //Create Spawn Locations
        this.SpawnLocations = Helper.SetupSpawnLocations();
@@ -305,6 +307,7 @@ class Scene2 extends Phaser.Scene {
                 time.addEvent({ delay: 2000, callback: player.CanHurtPlayer, callbackScope: player, loop: false });
             }
         });
+
         //Player=>Collider Layer touch each other
         this.physics.add.collider(this.girl1, this.colLayer);
         //Player=>pickup touch each other
@@ -312,6 +315,9 @@ class Scene2 extends Phaser.Scene {
             pickup.Pickup(player);
             pickup.destroy();
         });
+
+        this.physics.add.collider(this.zombieGroup, this.colLayer);
+        this.physics.add.collider(this.bulletGroup, this.fenceLayer);
     }
 
 }
