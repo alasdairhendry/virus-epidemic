@@ -204,5 +204,36 @@ class Helper{
 
     }
 
+    static SetupSounds(_this){
+        //music
+        _this.music1 = _this.sound.add('music1');
+        _this.music2 = _this.sound.add('music2');
+        _this.music3 = _this.sound.add('music3');
+        _this.music4 = _this.sound.add('music4');
+        _this.music5 = _this.sound.add('music5');
+        //sfx
+      _this.maleScream1 =  _this.sound.add('maleScream1');
+        _this.maleScream2 = _this.sound.add('maleScream2');
+        _this.maleScream3 =  _this.sound.add('maleScream3');
+        _this.maleScream4 =  _this.sound.add('maleScream4');
+        _this.femaleScream1 =  _this.sound.add('femaleScream1');
+        _this.femaleScream2 =  _this.sound.add('femaleScream2');
+        _this.femaleScream3 = _this.sound.add('femaleScream3');
+        _this.femaleScream4 = _this.sound.add('femaleScream4');
+        _this.dryFire =  _this.sound.add('dryFire');
+        _this.bodyImpact1 =_this.sound.add('bodyImpact1');
+        _this.bodyImpact2 = _this.sound.add('bodyImpact2');
+        _this.bodyImpact3 = _this.sound.add('bodyImpact3');
+        _this.kaChing = _this.sound.add('kaChing');
+        _this.gunShot1 = _this.sound.add('gunShot1');
+        _this.zombieShout1 =_this.sound.add('zombieShout1');
+        _this.zombieShout2 = _this.sound.add('zombieShout2');
+        _this.collect1 = _this.sound.add('collect1');
+        _this.collect2 = _this.sound.add('collect2');
+        _this.collect3 = _this.sound.add('collect3');
+
+
+    }
+
 
 }

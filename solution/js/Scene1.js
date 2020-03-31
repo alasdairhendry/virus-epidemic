@@ -73,6 +73,33 @@ class Scene1 extends Phaser.Scene {
         //----particles-----//
         this.LoadSpriteSheet("bloodSplat", "assets/images/spriteSheets/bloodSplat.png", 64, 64);
 
+        //-----Audio------//
+        //music
+        this.load.audio('music1','assets/sounds/music/music1.mp3');
+        this.load.audio('music2','assets/sounds/music/music2.mp3');
+        this.load.audio('music3','assets/sounds/music/music3.mp3');
+        this.load.audio('music4','assets/sounds/music/music4.mp3');
+        this.load.audio('music5','assets/sounds/music/music5.mp3');
+        //sfx
+        this.load.audio('maleScream1','assets/sounds/maleScream1.mp3');
+        this.load.audio('maleScream2','assets/sounds/maleScream2.mp3');
+        this.load.audio('maleScream3','assets/sounds/maleScream3.mp3');
+        this.load.audio('maleScream4','assets/sounds/maleScream4.mp3');
+        this.load.audio('femaleScream1','assets/sounds/femaleScream1.mp3');
+        this.load.audio('femaleScream2','assets/sounds/femaleScream2.mp3');
+        this.load.audio('femaleScream3','assets/sounds/femaleScream3.mp3');
+        this.load.audio('femaleScream4','assets/sounds/femaleScream4.mp3');
+        this.load.audio('bodyImpact1','assets/sounds/bodyImpact1.mp3');
+        this.load.audio('bodyImpact2','assets/sounds/bodyImpact2.mp3');
+        this.load.audio('bodyImpact3','assets/sounds/bodyImpact3.mp3');
+        this.load.audio('dryFire','assets/sounds/dryFire.mp3');
+        this.load.audio('kaChing','assets/sounds/kaChing.mp3');
+        this.load.audio('zombieShout1','assets/sounds/zombieShout1.mp3');
+        this.load.audio('zombieShout2','assets/sounds/zombieShout2.mp3');
+        this.load.audio('gunShot1','assets/sounds/gunShot1.mp3');
+        this.load.audio('collect1','assets/sounds/collect1.mp3');
+        this.load.audio('collect2','assets/sounds/collect2.mp3');
+        this.load.audio('collect3','assets/sounds/collect3.mp3');
 
 
     }

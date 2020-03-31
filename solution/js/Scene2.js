@@ -20,12 +20,29 @@ class Scene2 extends Phaser.Scene {
         this.zombiesInWorld = [];
         this.numberOfZombies = 20;
         this.colLayer = null;
+        this.RandomMaleShout = [];
+        this.RandomZombieHit = [];
+        this.RandomMusic = [];
+        this.RandomCollect = [];
+
+        let musicConfig = {
+            mute: false,
+            volume: 0.1,
+            rate: 1,
+            detune: 0,
+            seek: 0,
+            loop: false,
+            delay: 0
+        };
+
 
         //---------------------CREATE STUFF------------------------//
 
         //setup Map
         this.map = this.make.tilemap({ key: "map" });
         Helper.MapSetup(this.map, 64, 64, 32, 32);
+
+
 
         //Create Groups
         this.bulletGroup = Helper.CreateNewGroup(this);
@@ -34,7 +51,29 @@ class Scene2 extends Phaser.Scene {
         this.playerGroup = Helper.CreateNewGroup(this);
         this.particleGroup = Helper.CreateNewGroup(this);
         this.UIGroup = Helper.CreateNewGroup(this);
-        this.CollidersGroup = Helper.CreateNewGroup(this);
+
+        //Create Sounds
+        Helper.SetupSounds(this);
+        this.RandomMaleShout.push(this.maleScream1);
+        this.RandomMaleShout.push(this.maleScream2);
+        this.RandomMaleShout.push(this.maleScream3);
+        this.RandomMaleShout.push(this.maleScream4);
+        this.RandomZombieHit.push(this.bodyImpact1);
+        this.RandomZombieHit.push(this.bodyImpact2);
+        this.RandomZombieHit.push(this.bodyImpact3);
+        this.RandomMusic.push(this.music1);
+        this.RandomMusic.push(this.music2);
+        this.RandomMusic.push(this.music3);
+        this.RandomMusic.push(this.music4);
+        this.RandomMusic.push(this.music5);
+        this.RandomCollect.push(this.collect1);
+        this.RandomCollect.push(this.collect2);
+        this.RandomCollect.push(this.collect3);
+
+        let musicIndex =  Math.floor(Math.random() * Math.floor(5));
+
+        this.RandomMusic[musicIndex].play(musicConfig);
+
 
 
         //Create Spawn Locations
@@ -68,7 +107,7 @@ class Scene2 extends Phaser.Scene {
         this.PlayerSetup(this.girl1,brainText,ammoText,healthText);
 
         //----add Physics Colliders----//
-        this.SetupCollisions(time);
+        this.SetupCollisions(time,this.RandomCollect);
 
 
 
@@ -130,6 +169,7 @@ class Scene2 extends Phaser.Scene {
                 this.canHurtPlayer = true;
             }
         };
+
         player.setInteractive();
         player.play("girl1_Right_anim");
         healthText.setText('' + player.health);
@@ -200,7 +240,7 @@ class Scene2 extends Phaser.Scene {
 
     CheckFire() {
         if (this.keySpace.isDown && this.canFire) {
-            this.FireBullet(this.bulletGroup, this.zombieGroup, this.playerGroup, this.pickupGroup, this.particleGroup, this.girl1, this.zombiesInWorld);
+            this.FireBullet(this.bulletGroup, this.zombieGroup, this.playerGroup, this.pickupGroup, this.particleGroup, this.girl1,this.RandomZombieHit,this.RandomCollect);
         }
     }
     SpawnZombie() {
@@ -210,20 +250,25 @@ class Scene2 extends Phaser.Scene {
             let zombie = this.zombieGroup.create(this.SpawnLocations[this.spawnPlaceIndex][0], this.SpawnLocations[this.spawnPlaceIndex][1], "zombieFaceLeft1");
             //******
             zombie.name = "ZOMBIE:" + this.zombieNumber;
-            this.zombiesInWorld.push(zombie);
-            this.zombieNumber++;
+
             //******
             zombie.health = 100;
+            this.zombiesInWorld.push(zombie);
+            this.zombieNumber++;
         }
         else {
             clearInterval(this.SpawnZombie);
         }
     }
 
-    FireBullet(bulletGroup, zombieGroup, playerGroup, pickupGroup, particleGroup, player) {
+    FireBullet(bulletGroup, zombieGroup, playerGroup, pickupGroup, particleGroup, player,RandomZombieHit,RandomCollect) {
+
+        this.gunShot1.play();
 
 
         if (this.girl1.ammo > 0) {
+
+
 
             this.canFire = false;
 
@@ -243,8 +288,11 @@ class Scene2 extends Phaser.Scene {
                     //get random in index
                     let index = Math.floor(Math.random() * Math.floor(3));
 
+
+                    RandomZombieHit[2].play();
                     //reduce zombie health
                     zombie.health -= bullet.damage;
+
 
                     //spawn blood splatter
                     let bloodSplat = particleGroup.create(zombie.x, zombie.y, 'bloodSplat');
@@ -252,6 +300,8 @@ class Scene2 extends Phaser.Scene {
 
                     //if zombie health ran out
                     if (zombie.health < 0) {
+                        let zomIndex = Math.floor(Math.random() * Math.floor(2));
+                        RandomZombieHit[zomIndex].play();
 
                         //update brains
                         player.UpdateBrains();
@@ -263,6 +313,9 @@ class Scene2 extends Phaser.Scene {
                                 health.Pickup = function (player) {
                                     player.GainHealth(1);
                                 };
+                                health.collect = function(){
+                                    RandomCollect[0].play();
+                                };
                                 health.play('health_anim');
                                 break;
 
@@ -271,6 +324,9 @@ class Scene2 extends Phaser.Scene {
                                 ammo.Pickup = function (player) {
                                     player.GainAmmo(10);
                                 };
+                                ammo.collect = function(){
+                                    RandomCollect[1].play();
+                                };
                                 ammo.play('ammo_anim');
                                 break;
 
@@ -278,6 +334,9 @@ class Scene2 extends Phaser.Scene {
                                 let gun = pickupGroup.create(zombie.x, zombie.y, 'gun');
                                 gun.Pickup = function (player) {
                                     player.GainAmmo(5);
+                                };
+                                gun.collect = function(){
+                                    RandomCollect[2].play();
                                 };
                                 gun.play('gun_anim');
                                 break;
@@ -298,7 +357,7 @@ class Scene2 extends Phaser.Scene {
         }
     }
 
-    SetupCollisions(time){
+    SetupCollisions(time,RandomCollect){
         //Zombie=>Player overlap each other
         this.physics.add.overlap(this.zombieGroup, this.playerGroup, function (zombie, player) {
             if (player.canHurtPlayer) {
@@ -313,6 +372,7 @@ class Scene2 extends Phaser.Scene {
         //Player=>pickup touch each other
         this.physics.add.collider(this.pickupGroup, this.playerGroup, function (pickup, player) {
             pickup.Pickup(player);
+            pickup.collect();
             pickup.destroy();
         });
 
