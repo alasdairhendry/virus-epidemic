@@ -11,10 +11,9 @@ class Scene2 extends Phaser.Scene {
         this.speed = 160;
         this.bulletVelX = 0;
         this.bulletVelY = 0;
-        // this.scaleX = 1;
-        // this.scaleY = 1;
         this.bulletRotation = 0;
-        this.canFire = true;
+        this.canFire1 = true;
+        this.canFire2 = true;
         this.canHurtPlayer = true;
         this.zombieNumber = 0;
         this.zombiesInWorld = [];
@@ -54,6 +53,7 @@ class Scene2 extends Phaser.Scene {
 
         //Create Sounds
         Helper.SetupSounds(this);
+        //SFX SETUP
         this.RandomMaleShout.push(this.maleScream1);
         this.RandomMaleShout.push(this.maleScream2);
         this.RandomMaleShout.push(this.maleScream3);
@@ -70,8 +70,8 @@ class Scene2 extends Phaser.Scene {
         this.RandomCollect.push(this.collect2);
         this.RandomCollect.push(this.collect3);
 
+        //MUSIC
         let musicIndex =  Math.floor(Math.random() * Math.floor(5));
-
         this.RandomMusic[musicIndex].play(musicConfig);
 
 
@@ -86,62 +86,79 @@ class Scene2 extends Phaser.Scene {
         Helper.SetupAnimations(this.anims);
 
 
-        //Setup UI
-        let healthUI = this.UIGroup.create(50, 50, 'healthUI');
-        healthUI.setScrollFactor(0);
-        let ammoUI = this.UIGroup.create(healthUI.x, healthUI.y + 100, 'ammoUI');
-        ammoUI.setScrollFactor(0);
-        let brainUI = this.UIGroup.create(healthUI.x, healthUI.y + 200, 'brainUI');
-        brainUI.setScrollFactor(0);
-        let healthText = this.add.text(healthUI.x + 70, healthUI.y - 20, '0', { fontFamily: '"Roboto Condensed"', fontSize: 40, fill: '#ffffff' });
-        healthText.setScrollFactor(0);
-        let ammoText = this.add.text(healthUI.x + 70, ammoUI.y - 20, '30', { fontFamily: '"Roboto Condensed"', fontSize: 40, fill: '#ffffff' });
-        ammoText.setScrollFactor(0);
-        let brainText = this.add.text(healthUI.x + 70, brainUI.y - 20, '0', { fontFamily: '"Roboto Condensed"', fontSize: 40, fill: '#ffffff' });
-        brainText.setScrollFactor(0);
+
+        //Setup player1 UI
+        this.SetupText();
 
         let time = this.time;
 
         //---Setup Player
+        //Player1
         this.girl1 = this.playerGroup.create(312, 1026, "girlFaceRight");
-        this.PlayerSetup(this.girl1,brainText,ammoText,healthText);
+        this.cameras.main.startFollow(this.girl1);
+        //Player2
+        this.girl2 = this.playerGroup.create(312,1026, "girlFaceRight");
+        this.PlayerSetup(this.girl1,this.brainText,this.ammoText,this.healthText,"Player 1");
+        this.girl2.visible = false;
+        this.girl2IsHere = false;
 
         //----add Physics Colliders----//
         this.SetupCollisions(time,this.RandomCollect);
 
 
-
-
         //looping time events
         this.time.addEvent({ delay: 1000, callback: this.SpawnZombie, callbackScope: this, loop: true });
-        this.time.addEvent({ delay: 500, callback: this.SetFireTrue, callbackScope: this, loop: true });
+        this.time.addEvent({ delay: 500, callback: this.SetFireTrue1, callbackScope: this, loop: true });
+        this.time.addEvent({ delay: 500, callback: this.SetFireTrue2, callbackScope: this, loop: true });
 
         //--------------------KEYBOARD INPUT-----------------//
+        //Player 1
         let keyCodes = Phaser.Input.Keyboard.KeyCodes;
         this.keyW = this.input.keyboard.addKey(keyCodes.W);
         this.keyA = this.input.keyboard.addKey(keyCodes.A);
         this.keyS = this.input.keyboard.addKey(keyCodes.S);
         this.keyD = this.input.keyboard.addKey(keyCodes.D);
         this.keySpace = this.input.keyboard.addKey(keyCodes.SPACE);
+        this.keyPlayer2 = this.input.keyboard.addKey(keyCodes.P);
+        //Player2
+        this.keyUp = this.input.keyboard.addKey(keyCodes.UP);
+        this.keyLeft = this.input.keyboard.addKey(keyCodes.LEFT);
+        this.keyDown = this.input.keyboard.addKey(keyCodes.DOWN);
+        this.keyRight = this.input.keyboard.addKey(keyCodes.RIGHT);
+        this.keyRightShift = this.input.keyboard.addKey(keyCodes.SHIFT);
+        this.keyPlayer2 = this.input.keyboard.addKey(keyCodes.P);
 
 
     }
 
     //-----------------UPDATE------------------------------//
     update() {
-        this.CheckMovement(this.speed, this.girl1);
-        this.CheckFire(this.girl1);
+        if (this.girl2IsHere)
+        {
+            this.CheckMovementPlayer2(this.speed, this.girl2);
+            this.CheckFirePlayer2(this.girl2);
+        }
+        this.CheckMovementPlayer1(this.speed, this.girl1);
+        this.CheckFirePlayer1(this.girl1);
+
         Helper.UpdateZombieMovement(50,this.zombiesInWorld,this.girl1);
+
+        if (this.keyPlayer2.isDown)
+        {
+            this.girl2IsHere = true;
+            this.girl2.visible = true;
+            this.PlayerSetup(this.girl2, this.brainText2 ,this.ammoText2,this.healthText2,"Player 2");
+        }
     }
 
     //----------------------CLASS METHODS-----------------------//
 
-    PlayerSetup(player,brainText,ammoText,healthText) {
-        this.cameras.main.startFollow(player);
+    PlayerSetup(player,brainText,ammoText,healthText, name) {
+
         player.setCollideWorldBounds(true);
 
 
-        player.name = "Player 1";
+        player.name = name;
         player.health = 1;
         player.ammo = 30;
         player.weapon = "gun";
@@ -177,7 +194,7 @@ class Scene2 extends Phaser.Scene {
         brainText.setText('' + player.brains);
     }
 
-    CheckMovement(speedX,player) {
+    CheckMovementPlayer1(speedX,player) {
         // Local variable defining the player movement
         let _speedy;
         let _speedx;
@@ -238,9 +255,75 @@ class Scene2 extends Phaser.Scene {
         }
     }
 
-    CheckFire() {
-        if (this.keySpace.isDown && this.canFire) {
-            this.FireBullet(this.bulletGroup, this.zombieGroup, this.playerGroup, this.pickupGroup, this.particleGroup, this.girl1,this.RandomZombieHit,this.RandomCollect);
+    CheckMovementPlayer2(speedX,player) {
+        // Local variable defining the player movement
+        let _speedy;
+        let _speedx;
+
+        let newAnimation = "idle";
+
+        // Work out the vertical movement first
+        if (this.keyUp.isDown) {
+            _speedy = -speedX;
+            newAnimation = "up";
+        }
+        else if (this.keyDown.isDown) {
+            _speedy = speedX;
+            newAnimation = "down";
+        }
+        else {
+            _speedy = 0;
+        }
+
+        // Work out the horizontal movement second - this will override the vertical movement
+        if (this.keyLeft.isDown) {
+            _speedx = -speedX;
+            newAnimation = "left";
+        }
+        else if (this.keyRight.isDown) {
+            _speedx = speedX;
+            newAnimation = "right";
+        }
+        else {
+            _speedx = 0;
+        }
+
+        let velocity = new Phaser.Math.Vector2();
+        velocity.x = _speedx;
+        velocity.y = _speedy;
+        velocity.normalize();
+        player.setVelocityX(velocity.x * speedX);
+        player.setVelocityY(velocity.y * speedX);
+
+        if (_speedx !== 0 || _speedy !== 0) {
+            // If we are moving, update the bullet velocity
+            this.bulletVelX = _speedx * 2;
+            this.bulletVelY = _speedy * 2;
+
+            // If we are moving, update the bullet angle
+            // let angle = ((Math.atan2(Math.sign(_speedx), Math.sign(_speedy)) * 180) / 3.14159) + 90;
+            this.bulletRotation = ((Math.atan2(Math.sign(_speedx), Math.sign(_speedy)) * 180) / 3.14159) + 90;
+
+            if (newAnimation !== player.animationDirection) {
+                // If the current animation is different from the new one then we should update it
+                Helper.SetPlayerAnimation(newAnimation,player);
+                player.animationDirection = newAnimation;
+            }
+        }
+        else {
+            Helper.SetPlayerAnimation("idle",this.girl2);
+            this.girl2.animationDirection = "idle";
+        }
+    }
+
+    CheckFirePlayer1() {
+        if (this.keySpace.isDown && this.canFire1) {
+            this.FireBullet1(this.bulletGroup, this.zombieGroup, this.playerGroup, this.pickupGroup, this.particleGroup, this.girl1,this.RandomZombieHit,this.RandomCollect);
+        }
+    }
+    CheckFirePlayer2() {
+        if (this.keyRightShift.isDown && this.canFire2) {
+            this.FireBullet2(this.bulletGroup, this.zombieGroup, this.playerGroup, this.pickupGroup, this.particleGroup, this.girl2,this.RandomZombieHit,this.RandomCollect);
         }
     }
     SpawnZombie() {
@@ -261,7 +344,7 @@ class Scene2 extends Phaser.Scene {
         }
     }
 
-    FireBullet(bulletGroup, zombieGroup, playerGroup, pickupGroup, particleGroup, player,RandomZombieHit,RandomCollect) {
+    FireBullet1(bulletGroup, zombieGroup, playerGroup, pickupGroup, particleGroup, player,RandomZombieHit,RandomCollect) {
 
         this.gunShot1.play();
 
@@ -270,7 +353,7 @@ class Scene2 extends Phaser.Scene {
 
 
 
-            this.canFire = false;
+            this.canFire1 = false;
 
 
             let posX = this.girl1.x + (this.girl1.width / 2);
@@ -350,14 +433,108 @@ class Scene2 extends Phaser.Scene {
                 });
         }
     }
+    FireBullet2(bulletGroup, zombieGroup, playerGroup, pickupGroup, particleGroup, player,RandomZombieHit,RandomCollect) {
 
-    SetFireTrue(_fireTrue) {
-        if (!this.canFire) {
-            this.canFire = true;
+        this.gunShot1.play();
+
+
+        if (this.girl2.ammo > 0) {
+
+
+
+            this.canFire2 = false;
+
+
+            let posX = this.girl2.x + (this.girl2.width / 2);
+            let yPos = this.girl2.y;
+            this.girl2.UpdateAmmo();
+
+            let bullet = bulletGroup.create(posX, yPos, 'bullet');
+            bullet.damage = 60;
+            bullet.setAngle(this.bulletRotation);
+            bullet.setVelocityX(this.bulletVelX);
+            bullet.setVelocityY(this.bulletVelY);
+            this.physics.add.overlap(bulletGroup, zombieGroup,
+                function (bullet, zombie) {
+
+                    //get random in index
+                    let index = Math.floor(Math.random() * Math.floor(3));
+
+
+                    RandomZombieHit[2].play();
+                    //reduce zombie health
+                    zombie.health -= bullet.damage;
+
+
+                    //spawn blood splatter
+                    let bloodSplat = particleGroup.create(zombie.x, zombie.y, 'bloodSplat');
+                    bloodSplat.play('bloodSplat_anim');
+
+                    //if zombie health ran out
+                    if (zombie.health < 0) {
+                        let zomIndex = Math.floor(Math.random() * Math.floor(2));
+                        RandomZombieHit[zomIndex].play();
+
+                        //update brains
+                        player.UpdateBrains();
+
+                        //drop random loot
+                        switch (index) {
+                            case 0:
+                                let health = pickupGroup.create(zombie.x, zombie.y, 'health');
+                                health.Pickup = function (player) {
+                                    player.GainHealth(1);
+                                };
+                                health.collect = function(){
+                                    RandomCollect[0].play();
+                                };
+                                health.play('health_anim');
+                                break;
+
+                            case 1:
+                                let ammo = pickupGroup.create(zombie.x, zombie.y, 'ammo');
+                                ammo.Pickup = function (player) {
+                                    player.GainAmmo(10);
+                                };
+                                ammo.collect = function(){
+                                    RandomCollect[1].play();
+                                };
+                                ammo.play('ammo_anim');
+                                break;
+
+                            case 2:
+                                let gun = pickupGroup.create(zombie.x, zombie.y, 'gun');
+                                gun.Pickup = function (player) {
+                                    player.GainAmmo(5);
+                                };
+                                gun.collect = function(){
+                                    RandomCollect[2].play();
+                                };
+                                gun.play('gun_anim');
+                                break;
+                        }
+
+                        //destroy zombie
+                        zombie.destroy();
+                    }
+                    //destroy bullet
+                    bullet.destroy();
+                });
         }
     }
 
-    SetupCollisions(time,RandomCollect){
+    SetFireTrue1(_fireTrue) {
+        if (!this.canFire1) {
+            this.canFire1 = true;
+        }
+    }
+    SetFireTrue2(_fireTrue) {
+        if (!this.canFire2) {
+            this.canFire2 = true;
+        }
+    }
+
+    SetupCollisions(time){
         //Zombie=>Player overlap each other
         this.physics.add.overlap(this.zombieGroup, this.playerGroup, function (zombie, player) {
             if (player.canHurtPlayer) {
@@ -369,6 +546,7 @@ class Scene2 extends Phaser.Scene {
 
         //Player=>Collider Layer touch each other
         this.physics.add.collider(this.girl1, this.colLayer);
+        this.physics.add.collider(this.girl2, this.colLayer);
         //Player=>pickup touch each other
         this.physics.add.collider(this.pickupGroup, this.playerGroup, function (pickup, player) {
             pickup.Pickup(player);
@@ -377,7 +555,42 @@ class Scene2 extends Phaser.Scene {
         });
 
         this.physics.add.collider(this.zombieGroup, this.colLayer);
-        this.physics.add.collider(this.bulletGroup, this.fenceLayer);
     }
+
+    SetupText(){
+        this.player1Text = this.add.text(100,50, 'Player 1', { fontFamily: '"Roboto Condensed"', fontSize: 60, fill: '#ffffff' });
+        this.player1Text.setScrollFactor(0);
+        this.healthUI = this.UIGroup.create(100, 200, 'healthUI');
+        this.healthUI.setScrollFactor(0);
+        this.ammoUI = this.UIGroup.create(this.healthUI.x, this.healthUI.y + 100, 'ammoUI');
+        this.ammoUI.setScrollFactor(0);
+        this.brainUI = this.UIGroup.create(this.healthUI.x, this.healthUI.y + 200, 'brainUI');
+        this.brainUI.setScrollFactor(0);
+        this.healthText = this.add.text(this.healthUI.x + 70, this.healthUI.y - 20, '0', { fontFamily: '"Roboto Condensed"', fontSize: 40, fill: '#ffffff' });
+        this.healthText.setScrollFactor(0);
+        this.ammoText = this.add.text(this.healthUI.x + 70, this.ammoUI.y - 20, '30', { fontFamily: '"Roboto Condensed"', fontSize: 40, fill: '#ffffff' });
+        this.ammoText.setScrollFactor(0);
+        this.brainText = this.add.text(this.healthUI.x + 70, this.brainUI.y - 20, '0', { fontFamily: '"Roboto Condensed"', fontSize: 40, fill: '#ffffff' });
+        this.brainText.setScrollFactor(0);
+
+        this.player2Text = this.add.text(100,650, 'Player 2', { fontFamily: '"Roboto Condensed"', fontSize: 60, fill: '#ffffff' });
+        this.player2Text.setScrollFactor(0);
+        this.healthUI2 = this.UIGroup.create(100, 800, 'healthUI');
+        this.healthUI2.setScrollFactor(0);
+        this.ammoUI2 = this.UIGroup.create(this.healthUI2.x, this.healthUI2.y + 100, 'ammoUI');
+        this.ammoUI2.setScrollFactor(0);
+        this.brainUI2 = this.UIGroup.create(this.healthUI2.x, this.healthUI2.y + 200, 'brainUI');
+        this.brainUI2.setScrollFactor(0);
+        this.healthText2 = this.add.text(this.healthUI2.x + 70, this.healthUI2.y - 20, '0', { fontFamily: '"Roboto Condensed"', fontSize: 40, fill: '#ffffff' });
+        this.healthText2.setScrollFactor(0);
+        this.ammoText2 = this.add.text(this.healthUI2.x + 70, this.ammoUI2.y - 20, '30', { fontFamily: '"Roboto Condensed"', fontSize: 40, fill: '#ffffff' });
+        this.ammoText2.setScrollFactor(0);
+        this.brainText2 = this.add.text(this.healthUI2.x + 70, this.brainUI2.y - 20, '0', { fontFamily: '"Roboto Condensed"', fontSize: 40, fill: '#ffffff' });
+        this.brainText2.setScrollFactor(0);
+
+
+    }
+
+
 
 }

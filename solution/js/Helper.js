@@ -163,7 +163,7 @@ class Helper{
         this.NewGroundLayer(map,"Ground", tileSet1, 0, 0);
         this.NewGroundLayer(map,"Buildings", tileSet2, 0, 0);
         this.NewGroundLayer(map,"Windows", tileSet3, 0, 0);
-       _this.fenceLayer = this.NewGroundLayer(map,"Fences", tileSet4, 0, 0);
+        this.NewGroundLayer(map,"Fences", tileSet4, 0, 0);
         this.NewGroundLayer(map,"Nature", tileSet5, 0, 0);
         this.NewGroundLayer(map,"Props", tileSet6, 0, 0);
         this.NewGroundLayer(map,"Cars", tileSet7, 0, 0);
