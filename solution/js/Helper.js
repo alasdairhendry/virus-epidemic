@@ -185,9 +185,9 @@ class Helper{
         let tileSet8 =  this.NewTileSet(map,"blood", "blood");
         let tileSet9 =  this.NewTileSet(map,"Overlay", "Overlay");
         let tileSet10 = this.NewTileSet(map,"Lights", "Lights");
-        let tileSet11 = this.NewTileSet(map,"Cols", "Cols");
 
-        _this.colLayer = this.NewGroundLayer(map,"Cols", tileSet11, 0, 0);
+
+        _this.colLayer = this.NewGroundLayer(map,"Cols", tileSet9, 0, 0);
         _this.colLayer.setCollisionBetween(0, 4096);
 
         this.NewGroundLayer(map,"Ground", tileSet1, 0, 0);
@@ -200,6 +200,7 @@ class Helper{
         this.NewGroundLayer(map,"blood", tileSet8, 0, 0);
         this.NewGroundLayer(map,"Overlay1", tileSet9, 0, 0);
         this.NewGroundLayer(map,"Overlay2", tileSet9, 0, 0);
+        this.NewGroundLayer(map,"Cols", tileSet9, 0, 0);
         this.NewGroundLayer(map,"Lights", tileSet10, 0, 0);
     }
 
