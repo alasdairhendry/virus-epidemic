@@ -106,10 +106,8 @@ class Scene2 extends Phaser.Scene {
         this.cameras.main.startFollow(this.girl1);
 
         //Player2
-        this.girl2 = this.playerGroup.create(312,1026, "girlFaceRight");
-
+        this.girl2 = this.physics.add.sprite(312,1026, "girlFaceRight");
         this.girl2.visible = false;
-        this.girl2.body.enabled = false;
         this.girl2IsHere = false;
 
         //----add Physics Colliders----//
@@ -145,7 +143,7 @@ class Scene2 extends Phaser.Scene {
         {
             this.girl2IsHere = true;
             this.girl2.visible = true;
-            this.girl2.body.enabled = true;
+            this.playerGroup.add(this.girl2);
             this.PlayerSetup(this.girl2, this.brainText2 ,this.ammoText2,this.healthText2,"Player 2");
         }
     }
