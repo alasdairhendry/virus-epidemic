@@ -22,6 +22,20 @@ class Helper{
         });
     }
 
+    static GetRandomInt(max) {
+        return Math.floor(Math.random() * Math.floor(max));
+    }
+
+    static GetRandomInt(min, max) {
+        min = Math.ceil(min);
+        max = Math.floor(max);
+        return Math.floor(Math.random() * (max - min)) + min; //The maximum is exclusive and the minimum is inclusive
+    }
+
+    static GetRandomArbitrary(min, max) {
+        return Math.random() * (max - min) + min;
+    }
+
    static MapSetup(map, mapWidth, mapHeight, tileWidth, tileHeight) {
         map.width = mapWidth;
         map.height = mapHeight;
@@ -35,8 +49,7 @@ class Helper{
 
 
     //--------------ANIMATION AND ZOMBIE MOVEMENT-----------------//
-    static UpdateZombieMovement(_zombieSpeed, zombiesInWorld, player) {
-
+    static UpdateZombieMovement(_zombieSpeed, zombiesInWorld, player1, player2, girl2IsHere) {
 
         for (let i = 0; i < zombiesInWorld.length; i++) {
 
@@ -44,10 +57,18 @@ class Helper{
 
             if (zombie.scene === undefined) continue;
 
+            let targetToFollow = player1;
+
+            if(girl2IsHere){
+                if(this.GetDistance(zombie,player2) <= this.GetDistance(zombie,player1)) {
+                    targetToFollow = player2;
+                }
+            }
+
             let animationDirection = "idle";
             let direction = new Phaser.Math.Vector2();
-            direction.x = player.x - zombie.x;
-            direction.y = player.y - zombie.y;
+            direction.x = targetToFollow.x - zombie.x;
+            direction.y = targetToFollow.y - zombie.y;
 
             direction.normalize();
 
@@ -68,9 +89,18 @@ class Helper{
                 zombie.animationDirection = animationDirection;
                 this.SetZombieAnimation(zombie);
             }
-            zombie.setVelocityX(direction.x * _zombieSpeed);
-            zombie.setVelocityY(direction.y * _zombieSpeed);
+            // zombie.setVelocityX(direction.x * _zombieSpeed);
+            // zombie.setVelocityY(direction.y * _zombieSpeed);
+
+            zombie.setVelocityX(direction.x * zombie.speed);
+            zombie.setVelocityY(direction.y * zombie.speed);
         }
+        }
+
+        static GetDistance(obj1, obj2){
+            let distY = obj1.y - obj2.y;
+            let distX = obj1.x - obj2.x;
+            return (distX * distX + distY * distY);
         }
 
        static SetZombieAnimation(zombie) {

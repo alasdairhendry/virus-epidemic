@@ -5,12 +5,9 @@ class Scene1 extends Phaser.Scene {
 
     constructor() {
         super("bootGame");
-
     }
 
     create() {
-
-
 
         this.add.text(20, 20, "Loading game....");
         this.scene.start("playGame");
@@ -21,7 +18,6 @@ class Scene1 extends Phaser.Scene {
 
 
     preload() {
-
 
         //------environment------//
         this.LoadImage("Cols", "assets/images/Col.png", 64, 64);

@@ -116,8 +116,8 @@ class Scene2 extends Phaser.Scene {
 
         //looping time events
         this.time.addEvent({ delay: 1000, callback: this.SpawnZombie, callbackScope: this, loop: true });
-        this.time.addEvent({ delay: 500, callback: this.GirlOneCanFire, callbackScope: this, loop: true });
-        this.time.addEvent({ delay: 500, callback: this.GirlTwoCanFire, callbackScope: this, loop: true });
+        this.time.addEvent({ delay: 350, callback: this.GirlOneCanFire, callbackScope: this, loop: true });
+        this.time.addEvent({ delay: 350, callback: this.GirlTwoCanFire, callbackScope: this, loop: true });
 
         //--------------------KEYBOARD INPUT-----------------//
         Helper.KeyboardSetup(this);
@@ -137,7 +137,7 @@ class Scene2 extends Phaser.Scene {
         this.CheckMovementPlayer(this.speed, this.girl1,this.keyW,this.keyS,this.keyA,this.keyD);
         this.CheckFirePlayer(this.keySpace,this.keySpace,this.girl1);
 
-        Helper.UpdateZombieMovement(50,this.zombiesInWorld,this.girl1);
+        Helper.UpdateZombieMovement(50, this.zombiesInWorld,this.girl1, this.girl2, this.girl2IsHere);
 
         if (this.keyPlayer2.isDown)
         {
@@ -269,6 +269,24 @@ class Scene2 extends Phaser.Scene {
             let zombie = this.zombieGroup.create(this.SpawnLocations[this.spawnPlaceIndex][0], this.SpawnLocations[this.spawnPlaceIndex][1], "zombieFaceLeft1");
             //******
             zombie.name = "ZOMBIE:" + this.zombieNumber;
+
+            let random = Helper.GetRandomInt(0, 4);
+
+            if(random == 0){
+                zombie.speed = 40;
+            }
+            else if(random == 1){
+                zombie.speed = 50;
+            }
+            else if(random == 2){
+                zombie.speed = 60;
+            }
+            else if(random == 3){
+                zombie.speed = 100;
+            }
+            else{
+                zombie.speed = 40;
+            }
 
             //******
             zombie.health = 100;
