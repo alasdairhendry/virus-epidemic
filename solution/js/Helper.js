@@ -233,7 +233,29 @@ class Helper{
         _this.collect3 = _this.sound.add('collect3');
 
 
+
     }
+
+    static KeyboardSetup(_this){
+        //Player 1
+        let keyCodes = Phaser.Input.Keyboard.KeyCodes;
+        _this.keyW = _this.input.keyboard.addKey(keyCodes.W);
+        _this.keyA = _this.input.keyboard.addKey(keyCodes.A);
+        _this.keyS = _this.input.keyboard.addKey(keyCodes.S);
+        _this.keyD = _this.input.keyboard.addKey(keyCodes.D);
+        _this.keySpace = _this.input.keyboard.addKey(keyCodes.SPACE);
+        _this.keyPlayer2 = _this.input.keyboard.addKey(keyCodes.P);
+
+        //Player2
+        _this.keyUp = _this.input.keyboard.addKey(keyCodes.UP);
+        _this.keyLeft = _this.input.keyboard.addKey(keyCodes.LEFT);
+        _this.keyDown = _this.input.keyboard.addKey(keyCodes.DOWN);
+        _this.keyRight = _this.input.keyboard.addKey(keyCodes.RIGHT);
+        _this.keyRightShift = _this.input.keyboard.addKey(keyCodes.SHIFT);
+       _this.keyPlayer2 = _this.input.keyboard.addKey(keyCodes.P);
+    }
+
+
 
 
 }
