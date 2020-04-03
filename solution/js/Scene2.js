@@ -307,8 +307,7 @@ class Scene2 extends Phaser.Scene {
     }
 
     SpawnZombie() {
-        this.numberOfZombies--;
-        if (this.numberOfZombies > 0) {
+
             this.spawnPlaceIndex = Math.floor(Math.random() * Math.floor(this.SpawnLocations.length));
             let zombie = this.zombieGroup.create(this.SpawnLocations[this.spawnPlaceIndex][0], this.SpawnLocations[this.spawnPlaceIndex][1], "zombieFaceLeft1");
             //******
@@ -336,10 +335,6 @@ class Scene2 extends Phaser.Scene {
             zombie.health = 100;
             this.zombiesInWorld.push(zombie);
             this.zombieNumber++;
-        }
-        else {
-            clearInterval(this.SpawnZombie);
-        }
     }
 
     FireBullet( player,_this) {

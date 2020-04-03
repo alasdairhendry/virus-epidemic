@@ -341,6 +341,7 @@ class Helper{
                 if (_this.gameIsOver === false) {
                     _this.gameIsOver = true;
                     _this.sfxGameOver.play();
+                    _this.scene.start("intro");
                 }
             }
         }
@@ -349,6 +350,7 @@ class Helper{
                 if (_this.gameIsOver === false) {
                     _this.gameIsOver = true;
                     _this.sfxGameOver.play();
+                    _this.scene.start("intro");
                 }
             }
         }

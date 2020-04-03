@@ -27,6 +27,7 @@ class Scene1 extends Phaser.Scene {
         this.LoadImage('Nature', 'assets/images/Nature.png', { frameWidth: 64, frameHeight: 64 });
         this.LoadImage('Props', 'assets/images/CityProps.png', { frameWidth: 64, frameHeight: 64 });
         this.LoadImage('promo12', 'assets/images/promo12.png', { frameWidth: 64, frameHeight: 64 });
+        this.LoadImage('button', 'assets/images/button.png', { frameWidth: 64, frameHeight: 64 });
         this.LoadImage('Cars', 'assets/images/Cars.png', { frameWidth: 64, frameHeight: 64 });
         this.LoadImage('blood', 'assets/images/Blood.png', { frameWidth: 64, frameHeight: 64 });
         this.LoadImage('Overlay', 'assets/images/Overlay.png', { frameWidth: 64, frameHeight: 64 });
