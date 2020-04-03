@@ -33,7 +33,8 @@ class controls extends Phaser.Scene {
         this.p2Shoot = this.add.text(this.p2.x + 70, this.p2.y + 300, "Press 'Right Shift' to Shoot", { fontFamily: '"Roboto Condensed"', fontSize: 40, fill: '#ffffff' });
         this.p2Shoot.setScrollFactor(0);
 
-        this.p2=  this.add.text(100,1000, "Press 'P' to add Player 2" , { fontFamily: '"Roboto Condensed"', fontSize: 60, fill: '#ffffff' });
+        this.add.text(100,1000, "Press 'P' to add Player 2" , { fontFamily: '"Roboto Condensed"', fontSize: 60, fill: '#ffffff' });
+        this.add.text(100,1100, "Press 'SPACE' while near Player to Revive" , { fontFamily: '"Roboto Condensed"', fontSize: 60, fill: '#ffffff' });
 
 
         this.time.addEvent({ delay: 5000, callback: this.loadScene1, callbackScope: this, loop: false });
