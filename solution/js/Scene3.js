@@ -155,13 +155,13 @@ class Scene3 extends Phaser.Scene {
 
         if (this.girl2IsHere)
         {
-            if(this.girl2.isDowned == false) {
+            if(this.girl2.isDowned === false) {
                 this.CheckMovementPlayer(this.speed, this.girl2, this.keyUp, this.keyDown, this.keyLeft, this.keyRight);
                 this.CheckFirePlayer(this.keyRightShift, this.keyRightShift, this.girl2);
             }
         }
 
-        if(this.girl1.isDowned == false) {
+        if(this.girl1.isDowned === false) {
             this.CheckMovementPlayer(this.speed, this.girl1, this.keyW, this.keyS, this.keyA, this.keyD);
             this.CheckFirePlayer(this.keySpace, this.keySpace, this.girl1);
         }
