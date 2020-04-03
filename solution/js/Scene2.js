@@ -44,7 +44,7 @@ class Scene2 extends Phaser.Scene {
         this.SpawnLocations = Helper.SetupSpawnLocations();
 
         //Setup Tile Sets
-        Helper.SetupTileSets(this,this.map,this.girl1);
+        Helper.SetupTileSetsLevelOne(this,this.map);
 
         //--------------------MAP END----------------------------//
 
@@ -146,6 +146,10 @@ class Scene2 extends Phaser.Scene {
         Helper.CheckDeath(this);
         Helper.CheckRevive(this);
 
+        if (this.keySpace.isDown){
+            this.scene.start("kevinslevel");
+        }
+
         if (this.girl2IsHere)
         {
             if(this.girl2.isDowned === false) {
@@ -193,7 +197,7 @@ class Scene2 extends Phaser.Scene {
             this.health += _health;
             healthText.setText('' + this.health);
 
-            if(_playSound == true)
+            if(_playSound === true)
                 _this.sfxRevive.play();
         };
         player.RemoveHealth = function (_health, _playSound) {
@@ -201,7 +205,7 @@ class Scene2 extends Phaser.Scene {
 
             this.health -= _health;
 
-            if(_playSound == true)
+            if(_playSound === true)
             _this.RandomMaleHurt[Helper.GetRandomInt(0,8)].play();
 
             if(this.health < 0)this.health = 0;
@@ -315,16 +319,16 @@ class Scene2 extends Phaser.Scene {
 
             let random = Helper.GetRandomInt(0, 4);
 
-            if(random == 0){
+            if(random === 0){
                 zombie.speed = 40;
             }
-            else if(random == 1){
+            else if(random === 1){
                 zombie.speed = 50;
             }
-            else if(random == 2){
+            else if(random === 2){
                 zombie.speed = 60;
             }
-            else if(random == 3){
+            else if(random === 3){
                 zombie.speed = 100;
             }
             else{

@@ -42,14 +42,14 @@ class Scene3 extends Phaser.Scene {
         //---------------------MAP START------------------------//
 
         //setup Map
-        this.map = this.make.tilemap({ key: "map" });
+        this.map = this.make.tilemap({ key: "kevin" });
         Helper.MapSetup(this.map, 64, 64, 32, 32);
 
         //Create Spawn Locations
         this.SpawnLocations = Helper.SetupSpawnLocations();
 
         //Setup Tile Sets
-        Helper.SetupTileSets(this,this.map,this.girl1);
+        Helper.SetupTileSetsLevelTwo(this,this.map);
 
         //--------------------MAP END----------------------------//
 
@@ -200,7 +200,7 @@ class Scene3 extends Phaser.Scene {
             this.health += _health;
             healthText.setText('' + this.health);
 
-            if(_playSound == true)
+            if(_playSound === true)
                 _this.sfxRevive.play();
         };
         player.RemoveHealth = function (_health, _playSound) {
@@ -208,7 +208,7 @@ class Scene3 extends Phaser.Scene {
 
             this.health -= _health;
 
-            if(_playSound == true)
+            if(_playSound === true)
                 _this.RandomMaleHurt[Helper.GetRandomInt(0,8)].play();
 
             if(this.health < 0)this.health = 0;

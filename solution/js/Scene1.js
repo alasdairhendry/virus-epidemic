@@ -30,6 +30,7 @@ class Scene1 extends Phaser.Scene {
         this.LoadImage('Cars', 'assets/images/Cars.png', { frameWidth: 64, frameHeight: 64 });
         this.LoadImage('blood', 'assets/images/Blood.png', { frameWidth: 64, frameHeight: 64 });
         this.LoadImage('Overlay', 'assets/images/Overlay.png', { frameWidth: 64, frameHeight: 64 });
+
         this.LoadImage('Lights', 'assets/images/Lights.png', { frameWidth: 64, frameHeight: 64 });
         this.LoadImage('bullet', 'assets/images/bullet.png', { frameWidth: 5, frameHeight: 3 });
 
@@ -40,6 +41,10 @@ class Scene1 extends Phaser.Scene {
         this.LoadImage('brainUI', 'assets/images/brainUI.png', { frameWidth: 32, frameHeight: 32 });
 
         this.load.tilemapTiledJSON("map", "assets/mapNew.json");
+
+        this.LoadImage('KevinTiles', 'assets/images/KevinTiles.png', { frameWidth: 64, frameHeight: 64 });
+        this.load.tilemapTiledJSON("kevin", "assets/kevin.json");
+        this.load.tilemapTiledJSON("kennys", "assets/kennys.json");
 
         //-----players-----//
         this.LoadSpriteSheet("girlWalkLeft1", "assets/images/spriteSheets/girl1_walkLeft.png", 32, 64);

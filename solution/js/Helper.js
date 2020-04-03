@@ -191,7 +191,7 @@ class Helper{
         return this.SpawnLocations;
     }
 
-    static SetupTileSets(_this,map){
+    static SetupTileSetsLevelOne(_this,map){
 
         let tileSet1 =  this.NewTileSet(map,"Ground", "Ground");
         let tileSet2 =  this.NewTileSet(map,"Buildings", "Buildings");
@@ -220,6 +220,21 @@ class Helper{
         this.NewGroundLayer(map,"Overlay2", tileSet9, 0, 0);
         this.NewGroundLayer(map,"Cols", tileSet9, 0, 0);
         this.NewGroundLayer(map,"Lights", tileSet10, 0, 0);
+    }
+    static SetupTileSetsLevelTwo(_this,map){
+
+        let tileSet1 =  this.NewTileSet(map,"KevinTiles", "KevinTiles");
+
+        _this.colLayer = this.NewGroundLayer(map,"Cols1", tileSet1, 0, 0);
+        _this.colLayer.setCollisionBetween(0, 4096);
+
+        this.NewGroundLayer(map,"Ground1", tileSet1, 0, 0);
+        this.NewGroundLayer(map,"Walls1", tileSet1, 0, 0);
+        this.NewGroundLayer(map,"Doors1", tileSet1, 0, 0);
+        this.NewGroundLayer(map,"Props1", tileSet1, 0, 0);
+        this.NewGroundLayer(map,"Blood1", tileSet1, 0, 0);
+        this.NewGroundLayer(map,"Doorway1", tileSet1, 0, 0);
+
     }
 
     static SetupAnimations(anims){
@@ -337,7 +352,7 @@ class Helper{
 
         if(_this.girl2IsHere){
             if(_this.girl1.isDowned && _this.girl2.isDowned) {
-                if (_this.gameIsOver == false) {
+                if (_this.gameIsOver === false) {
                     _this.gameIsOver = true;
                     _this.sfxGameOver.play();
                 }
@@ -345,7 +360,7 @@ class Helper{
         }
         else {
             if (_this.girl1.isDowned) {
-                if (_this.gameIsOver == false) {
+                if (_this.gameIsOver === false) {
                     _this.gameIsOver = true;
                     _this.sfxGameOver.play();
                 }
