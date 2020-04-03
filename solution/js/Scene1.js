@@ -97,6 +97,19 @@ class Scene1 extends Phaser.Scene {
         this.load.audio('collect2','assets/sounds/collect2.mp3');
         this.load.audio('collect3','assets/sounds/collect3.mp3');
 
+        this.load.audio('hurt1','assets/sounds/Hurt 1.wav');
+        this.load.audio('hurt2','assets/sounds/Hurt 2.wav');
+        this.load.audio('hurt3','assets/sounds/Hurt 3.wav');
+        this.load.audio('hurt4','assets/sounds/Hurt 4.wav');
+        this.load.audio('hurt5','assets/sounds/Hurt 5.wav');
+        this.load.audio('hurt6','assets/sounds/Hurt 6.wav');
+        this.load.audio('hurt7','assets/sounds/Hurt 7.wav');
+        this.load.audio('hurt8','assets/sounds/Hurt 8.wav');
+
+        this.load.audio('revive','assets/sounds/revive.mp3');
+        this.load.audio('gameover','assets/sounds/GameOver.mp3');
+
+
 
     }
 

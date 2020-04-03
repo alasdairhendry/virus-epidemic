@@ -8,6 +8,7 @@ class Scene2 extends Phaser.Scene {
     create() {
 
         //Class Variables
+        this.gameIsOver = false;
         this.speed = 160;
         this.bulletVelX = 0;
         this.bulletVelY = 0;
@@ -17,6 +18,7 @@ class Scene2 extends Phaser.Scene {
         this.numberOfZombies = 20;
         this.colLayer = null;
         this.RandomMaleShout = [];
+        this.RandomMaleHurt = [];
         this.RandomZombieHit = [];
         this.RandomMusic = [];
         this.RandomCollect = [];
@@ -69,14 +71,26 @@ class Scene2 extends Phaser.Scene {
         this.RandomMaleShout.push(this.maleScream2);
         this.RandomMaleShout.push(this.maleScream3);
         this.RandomMaleShout.push(this.maleScream4);
+
+        this.RandomMaleHurt.push(this.sfxHurt1);
+        this.RandomMaleHurt.push(this.sfxHurt2);
+        this.RandomMaleHurt.push(this.sfxHurt3);
+        this.RandomMaleHurt.push(this.sfxHurt4);
+        this.RandomMaleHurt.push(this.sfxHurt5);
+        this.RandomMaleHurt.push(this.sfxHurt6);
+        this.RandomMaleHurt.push(this.sfxHurt7);
+        this.RandomMaleHurt.push(this.sfxHurt8);
+
         this.RandomZombieHit.push(this.bodyImpact1);
         this.RandomZombieHit.push(this.bodyImpact2);
         this.RandomZombieHit.push(this.bodyImpact3);
+
         this.RandomMusic.push(this.music1);
         this.RandomMusic.push(this.music2);
         this.RandomMusic.push(this.music3);
         this.RandomMusic.push(this.music4);
         this.RandomMusic.push(this.music5);
+
         this.RandomCollect.push(this.collect1);
         this.RandomCollect.push(this.collect2);
         this.RandomCollect.push(this.collect3);
@@ -102,7 +116,7 @@ class Scene2 extends Phaser.Scene {
         //---Setup Player
         //Player1
         this.girl1 = this.playerGroup.create(312, 1026, "girlFaceRight");
-        this.PlayerSetup(this.girl1,this.brainText,this.ammoText,this.healthText,"Player 1");
+        this.PlayerSetup(this.girl1,this.brainText,this.ammoText,this.healthText,"Player 1",this);
         this.cameras.main.startFollow(this.girl1);
 
         //Player2
@@ -129,34 +143,43 @@ class Scene2 extends Phaser.Scene {
 
     //-----------------UPDATE------------------------------//
     update() {
+        Helper.CheckDeath(this);
+        Helper.CheckRevive(this);
+
         if (this.girl2IsHere)
         {
-            this.CheckMovementPlayer(this.speed, this.girl2,this.keyUp,this.keyDown,this.keyLeft,this.keyRight);
-            this.CheckFirePlayer(this.keyRightShift,this.keyRightShift,this.girl2);
+            if(this.girl2.isDowned == false) {
+                this.CheckMovementPlayer(this.speed, this.girl2, this.keyUp, this.keyDown, this.keyLeft, this.keyRight);
+                this.CheckFirePlayer(this.keyRightShift, this.keyRightShift, this.girl2);
+            }
         }
-        this.CheckMovementPlayer(this.speed, this.girl1,this.keyW,this.keyS,this.keyA,this.keyD);
-        this.CheckFirePlayer(this.keySpace,this.keySpace,this.girl1);
+
+        if(this.girl1.isDowned == false) {
+            this.CheckMovementPlayer(this.speed, this.girl1, this.keyW, this.keyS, this.keyA, this.keyD);
+            this.CheckFirePlayer(this.keySpace, this.keySpace, this.girl1);
+        }
 
         Helper.UpdateZombieMovement(50, this.zombiesInWorld,this.girl1, this.girl2, this.girl2IsHere);
 
-        if (this.keyPlayer2.isDown)
+        if (this.keyPlayer2.isDown && !this.girl2IsHere && !this.gameIsOver)
         {
             this.girl2IsHere = true;
             this.girl2.visible = true;
             this.playerGroup.add(this.girl2);
-            this.PlayerSetup(this.girl2, this.brainText2 ,this.ammoText2,this.healthText2,"Player 2");
+            this.PlayerSetup(this.girl2, this.brainText2 ,this.ammoText2,this.healthText2,"Player 2", this);
         }
     }
 
     //----------------------CLASS METHODS-----------------------//
 
-    PlayerSetup(player,brainText,ammoText,healthText, name) {
+    PlayerSetup(player,brainText,ammoText,healthText, name, _this) {
 
         player.setCollideWorldBounds(true);
 
 
         player.name = name;
-        player.health = 1;
+        player.health = 3;
+        player.isDowned = false;
         player.ammo = 30;
         player.weapon = "gun";
         player.brains = 0;
@@ -166,8 +189,28 @@ class Scene2 extends Phaser.Scene {
             this.brains++;
             brainText.setText('' + this.brains);
         };
-        player.GainHealth = function (_health) {
+        player.GainHealth = function (_health, _playSound) {
             this.health += _health;
+            healthText.setText('' + this.health);
+
+            if(_playSound == true)
+                _this.sfxRevive.play();
+        };
+        player.RemoveHealth = function (_health, _playSound) {
+            if(this.health <= 0)return;
+
+            this.health -= _health;
+
+            if(_playSound == true)
+            _this.RandomMaleHurt[Helper.GetRandomInt(0,8)].play();
+
+            if(this.health < 0)this.health = 0;
+
+            if(this.health <= 0){
+                _this.maleScream4.play();
+                player.isDowned = true;
+            }
+
             healthText.setText('' + this.health);
         };
         player.GainAmmo = function (_ammo) {
@@ -353,7 +396,7 @@ class Scene2 extends Phaser.Scene {
         this.physics.add.overlap(this.zombieGroup, this.playerGroup, function (zombie, player) {
             if (player.canHurtPlayer) {
                 player.canHurtPlayer = false;
-                player.GainHealth(-1);
+                player.RemoveHealth(1, true);
                 time.addEvent({ delay: 2000, callback: player.CanHurtPlayer, callbackScope: player, loop: false });
             }
         });
@@ -364,7 +407,7 @@ class Scene2 extends Phaser.Scene {
         //Player=>pickup touch each other
         this.physics.add.collider(this.healthPickupGroup, this.playerGroup, function (health, player) {
 
-            player.GainHealth(1);
+            player.GainHealth(1, false);
             health.sound.play();
             health.destroy();
         });

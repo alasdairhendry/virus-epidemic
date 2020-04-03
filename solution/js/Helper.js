@@ -63,6 +63,24 @@ class Helper{
                 if(this.GetDistance(zombie,player2) <= this.GetDistance(zombie,player1)) {
                     targetToFollow = player2;
                 }
+
+                if(player1.isDowned){
+                    targetToFollow = player2;
+                }
+
+                if(player2.isDowned){
+                    targetToFollow = player1;
+                }
+
+                if(player1.isDowned && player2.isDowned)
+                {
+                    return;
+                }
+            }
+            else{
+                if(player1.isDowned){
+                 return;
+                }
             }
 
             let animationDirection = "idle";
@@ -263,6 +281,17 @@ class Helper{
         _this.collect2 = _this.sound.add('collect2');
         _this.collect3 = _this.sound.add('collect3');
 
+        _this.sfxHurt1 = _this.sound.add('hurt1');
+        _this.sfxHurt2 = _this.sound.add('hurt2');
+        _this.sfxHurt3 = _this.sound.add('hurt3');
+        _this.sfxHurt4 = _this.sound.add('hurt4');
+        _this.sfxHurt5 = _this.sound.add('hurt5');
+        _this.sfxHurt6 = _this.sound.add('hurt6');
+        _this.sfxHurt7 = _this.sound.add('hurt7');
+        _this.sfxHurt8 = _this.sound.add('hurt8');
+
+        _this.sfxGameOver = _this.sound.add('gameover');
+        _this.sfxRevive = _this.sound.add('revive');
 
 
     }
@@ -287,6 +316,73 @@ class Helper{
     }
 
 
+    static CheckDeath(_this){
+        if(_this.girl1.isDowned){
+            _this.girl1.setVelocityX(0);
+            _this.girl1.setVelocityY(0);
 
+            Helper.SetPlayerAnimation("idle",_this.girl1);
+            _this.girl1.animationDirection = "idle";
+        }
+
+        if(_this.girl2IsHere) {
+            if (_this.girl2.isDowned) {
+                _this.girl2.setVelocityX(0);
+                _this.girl2.setVelocityY(0);
+
+                Helper.SetPlayerAnimation("idle", _this.girl1);
+                _this.girl2.animationDirection = "idle";
+            }
+        }
+
+        if(_this.girl2IsHere){
+            if(_this.girl1.isDowned && _this.girl2.isDowned) {
+                if (_this.gameIsOver == false) {
+                    _this.gameIsOver = true;
+                    _this.sfxGameOver.play();
+                }
+            }
+        }
+        else {
+            if (_this.girl1.isDowned) {
+                if (_this.gameIsOver == false) {
+                    _this.gameIsOver = true;
+                    _this.sfxGameOver.play();
+                }
+            }
+        }
+    }
+
+    static CheckRevive(_this){
+
+        let healthToGiveOnRevive = 3;
+        let healthToRemoveOnRevive = 1;
+
+        if(_this.girl2IsHere) {
+            if (_this.girl1.isDowned) {
+                if(Helper.GetDistance(_this.girl1, _this.girl2) <= 5000){
+                    if(_this.keySpace.isDown){
+                        if(_this.girl2.health > healthToRemoveOnRevive){
+                            _this.girl2.RemoveHealth(healthToRemoveOnRevive, false);
+                            _this.girl1.GainHealth(healthToGiveOnRevive, true);
+                            _this.girl1.isDowned = false;
+                        }
+                    }
+                }
+            }
+
+            if (_this.girl2.isDowned) {
+                if(Helper.GetDistance(_this.girl1, _this.girl2) <= 5000){
+                    if(_this.keySpace.isDown){
+                        if(_this.girl1.health > healthToRemoveOnRevive){
+                            _this.girl1.RemoveHealth(healthToRemoveOnRevive, false);
+                            _this.girl2.GainHealth(healthToGiveOnRevive, true);
+                            _this.girl2.isDowned = false;
+                        }
+                    }
+                }
+            }
+        }
+    }
 
 }
