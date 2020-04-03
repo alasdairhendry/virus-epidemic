@@ -10,7 +10,7 @@ class Scene1 extends Phaser.Scene {
     create() {
 
         this.add.text(20, 20, "Loading game....");
-        this.scene.start("playGame");
+        this.scene.start("intro");
     }
 
 
@@ -20,17 +20,16 @@ class Scene1 extends Phaser.Scene {
     preload() {
 
         //------environment------//
-        this.LoadImage("Cols", "assets/images/Col.png", 64, 64);
         this.LoadImage("Ground", "assets/images/Ground.png", 64, 64);
         this.LoadImage('Buildings', 'assets/images/Buildings.png', { frameWidth: 64, frameHeight: 64 });
         this.LoadImage('Windows', 'assets/images/windows.png', { frameWidth: 64, frameHeight: 64 });
         this.LoadImage('Fences', 'assets/images/Fences.png', { frameWidth: 64, frameHeight: 64 });
         this.LoadImage('Nature', 'assets/images/Nature.png', { frameWidth: 64, frameHeight: 64 });
         this.LoadImage('Props', 'assets/images/CityProps.png', { frameWidth: 64, frameHeight: 64 });
+        this.LoadImage('promo12', 'assets/images/promo12.png', { frameWidth: 64, frameHeight: 64 });
         this.LoadImage('Cars', 'assets/images/Cars.png', { frameWidth: 64, frameHeight: 64 });
         this.LoadImage('blood', 'assets/images/Blood.png', { frameWidth: 64, frameHeight: 64 });
         this.LoadImage('Overlay', 'assets/images/Overlay.png', { frameWidth: 64, frameHeight: 64 });
-
         this.LoadImage('Lights', 'assets/images/Lights.png', { frameWidth: 64, frameHeight: 64 });
         this.LoadImage('bullet', 'assets/images/bullet.png', { frameWidth: 5, frameHeight: 3 });
 
@@ -42,9 +41,6 @@ class Scene1 extends Phaser.Scene {
 
         this.load.tilemapTiledJSON("map", "assets/mapNew.json");
 
-        this.LoadImage('KevinTiles', 'assets/images/KevinTiles.png', { frameWidth: 64, frameHeight: 64 });
-        this.load.tilemapTiledJSON("kevin", "assets/kevin.json");
-        this.load.tilemapTiledJSON("kennys", "assets/kennys.json");
 
         //-----players-----//
         this.LoadSpriteSheet("girlWalkLeft1", "assets/images/spriteSheets/girl1_walkLeft.png", 32, 64);

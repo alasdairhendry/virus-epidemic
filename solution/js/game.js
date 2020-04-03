@@ -9,7 +9,7 @@ let config = {
         // mode: Phaser.Scale.RESIZE,
         autoCenter: Phaser.Scale.CENTER_BOTH
     },
-    scene: [Scene1,Scene2,Scene3],
+    scene: [intro,Scene1,Scene2],
     physics: {
         default: 'arcade',
         arcade: {

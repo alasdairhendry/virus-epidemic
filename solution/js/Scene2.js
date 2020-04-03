@@ -146,9 +146,6 @@ class Scene2 extends Phaser.Scene {
         Helper.CheckDeath(this);
         Helper.CheckRevive(this);
 
-        if (this.keySpace.isDown){
-            this.scene.start("kevinslevel");
-        }
 
         if (this.girl2IsHere)
         {

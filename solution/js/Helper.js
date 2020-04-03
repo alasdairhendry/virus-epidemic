@@ -221,21 +221,7 @@ class Helper{
         this.NewGroundLayer(map,"Cols", tileSet9, 0, 0);
         this.NewGroundLayer(map,"Lights", tileSet10, 0, 0);
     }
-    static SetupTileSetsLevelTwo(_this,map){
 
-        let tileSet1 =  this.NewTileSet(map,"KevinTiles", "KevinTiles");
-
-        _this.colLayer = this.NewGroundLayer(map,"Cols1", tileSet1, 0, 0);
-        _this.colLayer.setCollisionBetween(0, 4096);
-
-        this.NewGroundLayer(map,"Ground1", tileSet1, 0, 0);
-        this.NewGroundLayer(map,"Walls1", tileSet1, 0, 0);
-        this.NewGroundLayer(map,"Doors1", tileSet1, 0, 0);
-        this.NewGroundLayer(map,"Props1", tileSet1, 0, 0);
-        this.NewGroundLayer(map,"Blood1", tileSet1, 0, 0);
-        this.NewGroundLayer(map,"Doorway1", tileSet1, 0, 0);
-
-    }
 
     static SetupAnimations(anims){
         //-----players-----//
